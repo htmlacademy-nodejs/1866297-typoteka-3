@@ -8,6 +8,7 @@ const DEFAULT_COUNT = 1;
 const FILE_NAME = `mocks.json`;
 const EARLIEST_POSSIBLE_DATE = Date.now() - 1000 * 60 * 60 * 24 * 90;
 const MAX_PUBLICATIONS_COUNT = 1000;
+const MAX_ANNOUNCE_COUNT = 5;
 
 const TITLES = [
   `Ёлки. История деревьев`,
@@ -59,42 +60,34 @@ const CATEGORIES = [
   `Железо`,
 ];
 
-const formatNumber = (num) => {
-  return String(num).padStart(2, 0);
-};
-
-const formatDate = (date) => {
-  return `${date.getFullYear()}-${formatNumber(
-      date.getMonth() + 1
-  )}-${formatNumber(date.getDate())} ${formatNumber(date.getHours())}:${formatNumber(date.getMinutes())}:${formatNumber(date.getSeconds())}`;
-};
-
 const generatePublications = (count) =>
-  Array(count)
-    .fill({})
-    .map(() => ({
-      title: TITLES[getRandomInt(0, TITLES.length - 1)],
-      createdDate: formatDate(
-          new Date(getRandomInt(EARLIEST_POSSIBLE_DATE, Date.now() - 1))
-      ),
-      announce: shuffle(SENTENCES).slice(0, getRandomInt(1, 5)).join(` `),
-      fullText: shuffle(SENTENCES)
-        .slice(0, getRandomInt(1, SENTENCES.length - 1))
-        .join(` `),
-      category: [CATEGORIES[getRandomInt(0, CATEGORIES.length - 1)]],
-    }));
+  Array.from({length: count}, () => ({
+    title: TITLES[getRandomInt(0, TITLES.length - 1)],
+    createdDate: new Date(
+        getRandomInt(EARLIEST_POSSIBLE_DATE, Date.now() - 1)
+    ).toISOString(),
+    announce: shuffle(SENTENCES.slice())
+      .slice(0, getRandomInt(1, MAX_ANNOUNCE_COUNT))
+      .join(` `),
+    fullText: shuffle(SENTENCES.slice())
+      .slice(0, getRandomInt(1, SENTENCES.length - 1))
+      .join(` `),
+    category: shuffle(CATEGORIES.slice()).slice(
+        0,
+        getRandomInt(1, CATEGORIES.length - 1)
+    ),
+  }));
 
 module.exports = {
   name: `--generate`,
   run(args) {
     const [count] = args;
     const countPublications = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const content = JSON.stringify(generatePublications(countPublications));
-
-    if (count > MAX_PUBLICATIONS_COUNT) {
+    if (countPublications > MAX_PUBLICATIONS_COUNT) {
       console.info(`Не больше 1000 публикаций`);
       process.exit(ExitCode.error);
     }
+    const content = JSON.stringify(generatePublications(countPublications));
 
     fs.writeFile(FILE_NAME, content, (err) => {
       if (err) {
