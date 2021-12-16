@@ -75,11 +75,10 @@ block content
                   p.comments__message Конечно, прежде чем так писать, нужно искренне приложить усилия, чтобы разобраться — не все люди умеют выражать свои мысли.
             .comments__footer.comments__footer--user
               form(action='#' method='POST')
-                .avatar
+                .comments__avatar.avatar
                   img(src='img/avatar-2.png' alt='аватар пользователя')
                 label
                   textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
                 button.comments__button.button.button--colored(type='submit') Опубликовать
-              p.comments__error Сообщение не может быть пустым, напишите что-нибудь!
 
 

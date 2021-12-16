@@ -5,13 +5,12 @@ block content-color
     include ./partials/navigation-header.pug
     main
       section.search-page
-        .search-page__wrapper.search-page__wrapper--empty
+        .search-page__wrapper
           h1 Поиск
           .search.search-page__form
             form(action='#' method='get')
               label
-                input(type='text' placeholder='Что ищем?' value='Путешествия' name='query')
+                input(type='text' name='query' placeholder='Что ищем?')
               button.search__button.button.button--transparent(type='submit') Найти
-          p.search-page__empty Ничего не нашлось
 
 
