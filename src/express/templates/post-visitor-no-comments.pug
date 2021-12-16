@@ -1,0 +1,70 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1')
+    meta(name='description' content='Личный блог Типотека')
+    meta(http-equiv='X-UA-Compatible' content='ie=edge')
+    title Типотека
+    link(rel='preload' href='./fonts/Inter-Regular.woff2' as='font' crossorigin='anonymous')
+    link(rel='preload' href='./fonts/Inter-Medium.woff2' as='font' crossorigin='anonymous')
+    link(rel='preload' href='./fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
+    link(rel='stylesheet' href='css/style.min.css')
+  body
+    .wrapper
+      header.header
+        a.header__logo.logo(href='#')
+          img.logo__image(src='img/icons/logo-image-only.svg' alt='логотип Тайпотеки')
+          span.logo__name Типотека
+        nav.header__nav
+          ul.header__nav-list
+            li.header__list-item
+              a.header__registration(href='#') Регистрация
+            li.header__list-item
+              a.header__enter(href='#') Вход с паролем
+        a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
+      main
+        section.post
+          h1.visually-hidden Пост
+          section.post__content
+            h2.visually-hidden Основное содержание
+            .post__wrapper
+              .post__head
+                a.post__backwards.button.button--backwards(href='#') Назад
+                time.post__date(datetime='2019-03-21T20:33') 21.03.2019, 20:33
+                h2.post__title.title.title--main AirPods в один клик
+                ul.post__themes.themes
+                  li.themes__item
+                    a.themes__item-link(href='#')
+                      | Автомобили
+                      sup 88
+                    button.themes__remove-btn(type='button') Удалить категорию
+                  li.themes__item
+                    a.themes__item-link(href='#')
+                      | Удаленная работа
+                      sup 13
+                    button.themes__remove-btn(type='button') Удалить категорию
+                  li.themes__item
+                    a.themes__item-link(href='#')
+                      | Бизнес
+                      sup 13
+                    button.themes__remove-btn(type='button') Удалить категорию
+              .post__picture
+                img(src='img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
+              .post__text
+                h3 Бирюзовое доверие
+                p.
+                  У Apple иногда попадаются интерфейсы, за которые создателей хочется сильно поругать — к примеру интерфейс публикации приложения в AppStore, для которого я уже неделю восстановливаю свой аккаунт разработчика.
+
+                p Или интерфейс подключения AirPods на макбуке. Чтобы переключить наушники между телефоном и компьютером, нужно сначала нажать на значок звука, затем дождаться, когда в списке устройств появятся наушники, потом нажать на них и дождаться, пока случится вся магия подключения. Иногда по загадочным причинам магия не случается, и операцию нужно повторить, выполняя все те же клики-ожидания-клики — бесит.
+          .post__wrapper.post__wrapper--comments
+            section.post__comments.comments
+              h2.comments__title.title.title--middle Комментарии отсутствуют
+              .comments__footer.comments__footer--visitor
+                button.comments__button.button.button--colored(type='submit') Войти
+                .comments__registration
+                  p.text.text--signature
+                    b.title.title--small Регистрация
+                    | Чтобы присоединиться к переписке нужно зарегистрироваться
+
+

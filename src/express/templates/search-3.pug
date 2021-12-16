@@ -1,0 +1,16 @@
+
+  body
+    .wrapper-color
+      extends ./partials/navigation-header.pug
+      main
+        section.search-page
+          .search-page__wrapper.search-page__wrapper--empty
+            h1 Поиск
+            .search.search-page__form
+              form(action='#' method='get')
+                label
+                  input(type='text' placeholder='Что ищем?' value='Путешествия' name='query')
+                button.search__button.button.button--transparent(type='submit') Найти
+            p.search-page__empty Ничего не нашлось
+
+
