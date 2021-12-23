@@ -1,7 +1,7 @@
 "use strict";
 const {Router} = require(`express`);
 const category = require(`../api/category`);
-const article = require(`../api/article`);
+const articles = require(`../api/articles`);
 const search = require(`../api/search`);
 
 const {
@@ -20,7 +20,7 @@ const app = new Router();
 
   category(app, new CategoryService(mockData));
   search(app, new SearchService(mockData));
-  article(app, new ArticleService(mockData), new CommentsService());
+  articles(app, new ArticleService(mockData), new CommentsService());
 })();
 
 module.exports = app;

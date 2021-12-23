@@ -14,5 +14,6 @@ module.exports = (service) => (req, res, next) => {
   }
 
   res.locals.article = existArticle;
+  console.log(res.locals);
   return next();
 };

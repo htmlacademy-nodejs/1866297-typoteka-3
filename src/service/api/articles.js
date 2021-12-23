@@ -18,7 +18,7 @@ module.exports = (app, articleService, commentService) => {
     res.status(HttpCode.CREATED).json(newArticle);
   });
   route.get(`/:articleId`, articleExists(articleService), (req, res) => {
-    res.status(HttpCode.OK).json(req.locals.article);
+    res.status(HttpCode.OK).json(res.locals.article);
   });
   route.put(`/:articleId`, articleValidator, (req, res) => {
     const {articleId} = req.params;
@@ -26,13 +26,13 @@ module.exports = (app, articleService, commentService) => {
     res.status(HttpCode.CREATED).json(updatedArticle);
   });
   route.delete(`/:articleId`, articleExists(articleService), (req, res) => {
-    res.status(HttpCode.OK).json(req.locals.article);
+    res.status(HttpCode.OK).json(res.locals.article);
   });
   route.get(
       `/:articleId/comments`,
       articleExists(articleService),
       (req, res) => {
-        const comments = commentService.findAll(req.locals.article);
+        const comments = commentService.findAll(res.locals.article);
         res.status(HttpCode.OK).json(comments);
       }
   );
@@ -41,7 +41,7 @@ module.exports = (app, articleService, commentService) => {
       articleExists(articleService),
       (req, res) => {
         const {commentId} = req.params;
-        const {article} = req.locals;
+        const {article} = res.locals;
         const deletedComment = commentService.delete(article, commentId);
 
         if (!deletedComment) {
@@ -57,7 +57,7 @@ module.exports = (app, articleService, commentService) => {
       `/:articleId/comments`,
       [articleExists(articleService), commentValidator],
       (req, res) => {
-        const {article} = req.locals;
+        const {article} = res.locals;
         const newComment = commentService.create(article, req.body);
         res.status(HttpCode.CREATED).json(newComment);
       }
