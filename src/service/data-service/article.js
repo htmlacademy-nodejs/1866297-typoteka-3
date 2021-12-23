@@ -1,6 +1,7 @@
 'use strict';
-const nanoid = require(`nanoid`);
-const MAX_ID_LENGTH = require(`../../constants`);
+
+const {nanoid} = require(`nanoid`);
+const {MAX_ID_LENGTH} = require(`../../constants`);
 
 
 class ArticleService {
@@ -32,6 +33,9 @@ class ArticleService {
   }
   delete(id) {
     const article = this._articles.find((item) => item.id === id);
+    if (!article) {
+      return null;
+    }
     this._articles = this._articles.filter((item) => item.id !== id);
     return article;
   }
