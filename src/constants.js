@@ -17,3 +17,4 @@ module.exports.HttpCode = {
   UNAUTHORIZED: 401,
 };
 
+module.exports.MAX_ID_LENGTH = 6;
