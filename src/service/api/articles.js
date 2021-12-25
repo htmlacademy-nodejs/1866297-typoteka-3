@@ -4,9 +4,9 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const {articleValidator, articleExists, commentValidator} = require(`../middlewares`);
 
-const route = new Router();
 
 module.exports = (app, articleService, commentService) => {
+  const route = new Router();
   app.use(`/articles`, route);
 
   route.get(`/`, (req, res) => {
@@ -22,8 +22,14 @@ module.exports = (app, articleService, commentService) => {
   });
   route.put(`/:articleId`, articleValidator, (req, res) => {
     const {articleId} = req.params;
+    const existArticle = articleService.findOne(articleId);
+
+    if (!existArticle) {
+      return res.status(HttpCode.NOT_FOUND).send(`Not found with ${articleId}`);
+    }
+
     const updatedArticle = articleService.update(articleId, req.body);
-    res.status(HttpCode.CREATED).json(updatedArticle);
+    return res.status(HttpCode.OK).json(updatedArticle);
   });
   route.delete(`/:articleId`, (req, res) => {
     const {articleId} = req.params;

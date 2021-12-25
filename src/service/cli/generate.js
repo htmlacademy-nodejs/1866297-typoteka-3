@@ -43,7 +43,7 @@ const generatePublications = (count, titles, categories, sentences, comments) =>
     id: nanoid(MAX_ID_LENGTH),
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: new Date(
-        getRandomInt(EARLIEST_POSSIBLE_DATE, Date.now() - 1)
+        getRandomInt(EARLIEST_POSSIBLE_DATE, Date.now())
     ).toISOString(),
     announce: shuffle(sentences.slice())
       .slice(0, getRandomInt(1, MAX_ANNOUNCE_COUNT))
