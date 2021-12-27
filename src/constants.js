@@ -17,5 +17,9 @@ module.exports = {
     UNAUTHORIZED: 401,
   },
   API_PREFIX: `/api`,
-  MAX_ID_LENGTH: 6
+  MAX_ID_LENGTH: 6,
+  Env: {
+    DEVELOPMENT: `development`,
+    PRODUCTION: `production`
+  }
 };
