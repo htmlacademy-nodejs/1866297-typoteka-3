@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 
 
-module.exports = (app, service) => {
+const searchApi = (app, service) => {
   const route = new Router();
   app.use(`/search`, route);
 
@@ -22,3 +22,5 @@ module.exports = (app, service) => {
     res.status(searchStatus).json(searchResults);
   });
 };
+
+module.exports = searchApi;

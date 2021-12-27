@@ -3,8 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 
-
-module.exports = (app, service) => {
+const categoryApi = (app, service) => {
   const route = new Router();
   app.use(`/category`, route);
 
@@ -13,3 +12,5 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).json(categories);
   });
 };
+
+module.exports = categoryApi;

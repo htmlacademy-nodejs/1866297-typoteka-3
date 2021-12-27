@@ -5,7 +5,7 @@ const {HttpCode} = require(`../../constants`);
 const {articleValidator, articleExists, commentValidator} = require(`../middlewares`);
 
 
-module.exports = (app, articleService, commentService) => {
+const articlesApi = (app, articleService, commentService) => {
   const route = new Router();
   app.use(`/articles`, route);
 
@@ -74,3 +74,5 @@ module.exports = (app, articleService, commentService) => {
       }
   );
 };
+
+module.exports = articlesApi;
