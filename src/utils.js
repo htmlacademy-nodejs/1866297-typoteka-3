@@ -18,8 +18,11 @@ const shuffle = (someArray) => {
 
   return someArray;
 };
+const ensureArray = (value) =>
+  Array.isArray(value) ? value : [value];
 
 module.exports = {
   shuffle,
   getRandomInt,
+  ensureArray,
 };
