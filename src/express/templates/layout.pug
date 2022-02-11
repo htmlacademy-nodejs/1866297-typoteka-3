@@ -6,12 +6,14 @@ html(lang='ru')
     meta(name='description' content='Личный блог Типотека')
     meta(http-equiv='X-UA-Compatible' content='ie=edge')
     title Типотека
-    link(rel='preload' href='./fonts/Inter-Regular.woff2' as='font' crossorigin='anonymous')
-    link(rel='preload' href='./fonts/Inter-Medium.woff2' as='font' crossorigin='anonymous')
-    link(rel='preload' href='./fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
-    link(rel='stylesheet' href='css/style.min.css')
+    link(rel='preload' href='/fonts/Inter-Regular.woff2' as='font' crossorigin='anonymous')
+    link(rel='preload' href='/fonts/Inter-Medium.woff2' as='font' crossorigin='anonymous')
+    link(rel='preload' href='/fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
+    link(rel='stylesheet' href='/css/style.min.css')
 body
+  mixin formatDate(date, className)
+    time(class=className) #{date.split('T').join(", ").replace(/\.\d+?Z/, "")}
   block content
   include partials/footer.pug
-  script(src='/src/express/public/js/vendor.js')
-  script(src='/src/express/public/js/main.js')
+  script(src='/js/vendor.js')
+  script(src='/js/main.js')

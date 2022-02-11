@@ -7,7 +7,7 @@ block content
       section
         .popup.popup--new-publication.popup--anti
           .new-publication
-            form(action='#' method='POST')
+            form(action='#' method='POST' enctype="multipart/form-data")
               .new-publication__header
                 h1 Новая публикация
                 .new-publication__date-form
@@ -22,22 +22,28 @@ block content
                 .form__wrapper.form__wrapper--intro
                   .form__field
                     label
-                      input(type='text' name='title' placeholder='Заголовок' required)
+                      input(type='text' name='title' placeholder='Заголовок' value=article.title required)
                   .form__field.form__field--post-image
                     label
-                      input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly)
+                      input#image-name-field(type='text' name='photo' value='moya_mashinka.jpg' placeholder='Фотография' readonly)
                     .form__image-loader.form__image-loader--publication
                       label
                         input.visually-hidden(type='file' name='upload')
                         | Обзор
+                    button.button.button--transparent Удалить
                   .new-publication__category-wrapper
+                    each category, index in categories
+                      .new-publication__checkbox.new-publication__checkbox--auto
+                        input(id=`checkbox-auto-${index + 1}`)(type='checkbox' name=`category-${index + 1}`)
+                        label(for=`checkbox-auto-${index + 1}`) #{category}
                     a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
                 .form__wrapper.form__wrapper--text
                   .form__field.form__field--publication-text
                     label
-                      textarea(rows='5' name='announcement' placeholder='Анонс публикации')
+                      textarea(rows='5' name='announcement' placeholder='Анонс публикации') #{article.announce}
                   .form__field.form__field--publication-text
                     label
-                      textarea(rows='10' name='full-text' placeholder='Полный текст публикации')
+                      textarea(rows='10' name='full-text' placeholder='Полный текст публикации').
+                        #{article.fullText}
 
 
