@@ -145,12 +145,16 @@ const mockData = [
   },
 ];
 
-const app = express();
-app.use(express.json());
-search(app, new DataService(mockData));
+const createAPI = () => {
+  const app = express();
+  app.use(express.json());
+  search(app, new DataService(mockData));
+  return app;
+};
 
 describe(`API возвращает результат поиска на основании поискового запроса`, () => {
   let response;
+  const app = createAPI();
 
   beforeAll(async () => {
     response = await request(app).get(`/search`).query({
@@ -165,6 +169,7 @@ describe(`API возвращает результат поиска на осно
 
 test(`API возвращает 404 если ничего не найдено`,
     () => {
+      const app = createAPI();
       request(app)
         .get(`/search`)
         .query({
@@ -176,6 +181,7 @@ test(`API возвращает 404 если ничего не найдено`,
 
 test(`API возвращает 400 в случае отсутствия строки query`,
     () => {
+      const app = createAPI();
       request(app)
         .get(`/search`)
         .expect(HttpCode.BAD_REQUEST);

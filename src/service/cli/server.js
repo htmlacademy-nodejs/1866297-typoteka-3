@@ -35,17 +35,14 @@ module.exports = {
   run(args) {
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
-    try {
-      app.listen(port, (err) => {
-        if (err) {
-          return logger.error(`An error occurred on server creation: ${err.message}`);
-        }
-
-        return logger.info(`Listening to connections on ${port}`);
-      });
-    } catch (err) {
-      logger.error(`An error occurred: ${err.message}`);
-      process.exit(1);
-    }
+    app.listen(port, (err) => {
+      if (err) {
+        logger.error(
+            `An error occurred on server creation: ${err.message}`
+        );
+        process.exit(1);
+      }
+      return logger.info(`Listening to connections on ${port}`);
+    });
   },
 };
