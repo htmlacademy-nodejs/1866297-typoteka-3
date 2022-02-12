@@ -11,8 +11,8 @@ html(lang='ru')
     link(rel='preload' href='/fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
     link(rel='stylesheet' href='/css/style.min.css')
 body
-  mixin formatDate(date, className)
-    time(class=className) #{date.split('T').join(", ").replace(/\.\d+?Z/, "")}
+  mixin formatDate(date, className, attr)
+    time(class=className, datatime=(attr || false)) #{date.split('T').join(", ").replace(/\.\d+?Z/, "")}
   block content
   include partials/footer.pug
   script(src='/js/vendor.js')

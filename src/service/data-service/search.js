@@ -6,7 +6,10 @@ class SearchService {
   }
 
   findAll(searchText) {
-    return this._articles.filter((article)=> article.title.includes(searchText));
+    const lowerCaseText = searchText.toLowerCase();
+    return this._articles.filter((article) =>
+      article.title.toLowerCase().includes(lowerCaseText)
+    );
   }
 }
 

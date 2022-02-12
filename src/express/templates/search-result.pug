@@ -10,7 +10,11 @@ block content
           .search.search-page__form
             form(action='/search' method='get' autocomplete="off")
               label
-                input(type='text' name='query' placeholder='Что ищем?')
+                input(type='text' name='query' placeholder='Что ищем?' value=query)
               button.search__button.button.button--transparent(type='submit') Найти
+          each result in results
+            .search__result
+              +formatDate(result.createdDate, "search__date", result.createdDate)
+              a.search__link #{result.title}
 
 
