@@ -15,12 +15,11 @@ const getMockData = require(`../lib/get-mock-data`);
 
 const app = new Router();
 
-(async () => {
+module.exports = async () => {
   const mockData = await getMockData();
 
   category(app, new CategoryService(mockData));
   search(app, new SearchService(mockData));
   articles(app, new ArticleService(mockData), new CommentsService());
-})();
-
-module.exports = app;
+  return app;
+};

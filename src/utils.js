@@ -21,8 +21,14 @@ const shuffle = (someArray) => {
 const ensureArray = (value) =>
   Array.isArray(value) ? value : [value];
 
+const dataAsserts = {
+  notEmptyString: (value) => value && value.trim().length > 0,
+  notEmptyArray: (arr) => arr && arr.every((input) => input !== null),
+};
+
 module.exports = {
   shuffle,
   getRandomInt,
   ensureArray,
+  dataAsserts,
 };

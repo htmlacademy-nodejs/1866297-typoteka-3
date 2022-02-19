@@ -15,4 +15,5 @@ node_modules/
 build/
 
 mocks.json
-src/express/upload
+src/express/upload/img/*
+!/**/.gitkeep

@@ -31,12 +31,12 @@
     "supertest": "6.1.6"
   },
   "dependencies": {
-    "@types/jest": "^27.0.3",
+    "@types/jest": "27.0.3",
     "axios": "0.24.0",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "express": "4.17.1",
-    "multer": "^1.4.4",
+    "multer": "1.4.4",
     "nanoid": "3.1.30",
     "pino": "7.6.1",
     "pug": "3.0.2"
