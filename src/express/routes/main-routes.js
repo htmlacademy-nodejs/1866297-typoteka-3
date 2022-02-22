@@ -9,7 +9,7 @@ mainRouter.get(`/`, async (req, res) => {
   res.render(`main`, {articles});
 });
 
-mainRouter.get(`/register`, (req, res)=> res.render(`registration`));
+mainRouter.get(`/register`, (req, res)=> res.render(`sign-up`));
 mainRouter.get(`/login`, (req, res)=> res.render(`login`));
 mainRouter.get(`/search`, async (req, res) => {
   const {query} = req.query;

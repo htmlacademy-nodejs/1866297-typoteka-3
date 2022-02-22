@@ -6,11 +6,10 @@ const {API_PREFIX, HttpCode} = require(`../../constants.js`);
 const {getLogger} = require(`../lib/logger.js`);
 const routesPromise = require(`../api`);
 const DEFAULT_PORT = 3000;
-const app = express();
 const logger = getLogger({name: `api`});
 
-
 const initApp = async () => {
+  const app = express();
   app.use(express.json());
 
   app.use((req, res, next) => {
@@ -32,12 +31,13 @@ const initApp = async () => {
   app.use((err, _req, _res, _next) => {
     logger.error(`An error occurred on processing request: ${err.message}`);
   });
+  return app;
 };
 
 module.exports = {
   name: `--server`,
   async run(args) {
-    initApp();
+    const app = await initApp();
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
     http
