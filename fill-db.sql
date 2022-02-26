@@ -1,5 +1,5 @@
 --вставка пользователей
-INSERT INTO users(email, password_hash, first_name, last_name, avatar) VALUES
+INSERT INTO users(email, password, first_name, last_name, avatar) VALUES
 ('i.ivanov@example.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Иван', 'Иванов', 'avatar1.jpg'),
 ('p.petrov@example.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Пётр', 'Петров', 'avatar2.jpg');
 ('s.petrov@example.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Сергей', 'Петров', 'avatar3.jpg');
