@@ -2,7 +2,7 @@
 
 const express = require(`express`);
 const http = require(`http`);
-const {API_PREFIX, HttpCode} = require(`../../constants.js`);
+const {API_PREFIX, HttpCode, ExitCode} = require(`../../constants.js`);
 const {getLogger} = require(`../lib/logger.js`);
 const routesPromise = require(`../api`);
 const DEFAULT_PORT = 3000;
@@ -50,7 +50,7 @@ module.exports = {
         logger.error(
             `An error occurred on server creation: ${message}`
         );
-        process.exit(1);
+        process.exit(ExitCode.error);
       });
   },
 };
