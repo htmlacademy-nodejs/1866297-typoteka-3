@@ -1,9 +1,9 @@
 
   -- вставка пользователей
   INSERT INTO users(email, password, first_name, last_name, avatar) VALUES
-  ('ivanov@example.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Иван', 'Иванов', 'avatar1.jpg'),
-('petrov@example.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Пётр', 'Петров', 'avatar2.jpg'),
-('sidorov@example.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Артём', 'Сидоров', 'avatar3.jpg');
+  ('ivanov@example.com', md5('ivanov'), 'Иван', 'Иванов', 'avatar1.jpg'),
+('petrov@example.com', md5('petrov'), 'Пётр', 'Петров', 'avatar2.jpg'),
+('sidorov@example.com', md5('sidorov'), 'Артём', 'Сидоров', 'avatar3.jpg');
 
   -- вставка категорий
   INSERT INTO categories(name) VALUES
