@@ -7,8 +7,8 @@
     "test": "npm run eslint && npm run jest",
     "jest": "jest",
     "eslint": "eslint --ext .js src/",
-    "start": "cross-env NODE_ENV=production node ./src/service/service.js",
-    "start::debug": "cross-env NODE_ENV=development node ./src/service/service.js",
+    "start": "cross-env NODE_ENV=production node -r dotenv/config ./src/service/service.js",
+    "start::debug": "cross-env NODE_ENV=development node -r dotenv/config ./src/service/service.js",
     "check": "node ./src/service/service.js --generate 10",
     "start-front-server": "nodemon ./src/express/express.js"
   },
