@@ -14,6 +14,9 @@ node_modules/
 # Директория с собранными файлами проекта
 build/
 
+# Файл с переменными окружения
+.env
+
 mocks.json
 src/express/upload/img/*
 !/**/.gitkeep
