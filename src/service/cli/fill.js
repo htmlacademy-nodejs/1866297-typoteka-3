@@ -79,21 +79,21 @@ module.exports = {
     const users = [
       {
         email: `ivanov@example.com`,
-        password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+        password: `ivanov`,
         firstName: `Иван`,
         lastName: `Иванов`,
         avatar: `avatar1.jpg`,
       },
       {
         email: `petrov@example.com`,
-        password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+        password: `petrov`,
         firstName: `Пётр`,
         lastName: `Петров`,
         avatar: `avatar2.jpg`,
       },
       {
         email: `sidorov@example.com`,
-        password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+        password: `sidorov`,
         firstName: `Артём`,
         lastName: `Сидоров`,
         avatar: `avatar3.jpg`,
@@ -128,7 +128,7 @@ module.exports = {
     const userValues = users
       .map(
           ({email, password, firstName, lastName, avatar}) =>
-            `('${email}', '${password}', '${firstName}', '${lastName}', '${avatar}')`
+            `('${email}', md5('${password}'), '${firstName}', '${lastName}', '${avatar}')`
       )
       .join(`,\n`);
 
