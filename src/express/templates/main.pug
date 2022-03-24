@@ -22,34 +22,11 @@ block content
       section.main-page__theme-list
         h2.visually-hidden Список тем
         ul.themes
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Автомобили
-              sup 88
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Удаленная работа
-              sup 13
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Бизнес
-              sup 13
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Путешествия
-              sup 13
-          li.themes__item
-            a.themes__item-link.themes__item-link--padding(href='#')
-              | Дизайн и обустройство
-              sup 13
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Производство игрушек
-              sup 22
-          li.themes__item
-            a.themes__item-link(href='#')
-              | UX & UI
-              sup 22
+          each category of categories
+            li.themes__item
+              a.themes__item-link(href='#')
+                | #{category.name}
+                sup #{category.count}
       .main-page__section-flex
         section.main-page__hot.hot
           h2.hot__name
@@ -97,14 +74,14 @@ block content
           each article of articles
             li.preview__item
               ul.preview__breadcrumbs
-                each category in article.category
+                each category in article.categories
                   li.preview__breadcrumbs-item
-                    a.preview__breadcrumbs-link(href='#') #{category}
+                    a.preview__breadcrumbs-link(href='#') #{category.name}
               .preview__background
                 img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
-              +formatDate(article.createdDate,'preview__time')
+              +formatDate(article.createdAt,'preview__time')
               h3.preview__name
-                a.preview__name-link(href='#') #{article.title}
+                a.preview__name-link(href=`/articles/${article.id}`) #{article.title}
               p.preview__text #{article.text}
               a.preview__comment(href='#')
                 | Комментарии

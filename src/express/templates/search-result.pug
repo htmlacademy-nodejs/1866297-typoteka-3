@@ -14,7 +14,7 @@ block content
               button.search__button.button.button--transparent(type='submit') Найти
           each result in results
             .search__result
-              +formatDate(result.createdDate, "search__date", result.createdDate)
+              +formatDate(result.createdAt, "search__date", result.createdAt)
               a.search__link #{result.title}
 
 

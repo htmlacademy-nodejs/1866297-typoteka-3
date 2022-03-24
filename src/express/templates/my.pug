@@ -9,7 +9,7 @@ block content
         ul.notes__list
           each article in articles
             li.notes__list-item
-              +formatDate(article.createdDate,'notes__item-time')
+              +formatDate(article.createdAt,'notes__item-time')
               a.notes__item-text(href='#') #{article.title}
               button.notes__button.button.button--close-item(type='button')
                 span.visually-hidden Закрыть строку списка
