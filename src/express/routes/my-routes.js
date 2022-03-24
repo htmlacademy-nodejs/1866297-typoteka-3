@@ -9,7 +9,7 @@ myRouter.get(`/`, async (req, res) => {
   res.render(`my`, {articles});
 });
 myRouter.get(`/comments`, async (req, res) => {
-  const articles = await api.getArticles();
+  const articles = await api.getArticles({comments: true});
   res.render(`comments`, {articles});
 });
 

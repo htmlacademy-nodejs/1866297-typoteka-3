@@ -5,8 +5,12 @@ const mainRouter = new Router();
 const api = require(`../api`).getAPI();
 
 mainRouter.get(`/`, async (req, res) => {
-  const articles = await api.getArticles();
-  res.render(`main`, {articles});
+  const [articles, categories] = await Promise.all([
+    api.getArticles(),
+    api.getCategories(true),
+  ]);
+  const notEmptyCategories = categories.filter((category)=> Number(category.count) > 0);
+  res.render(`main`, {articles, categories: notEmptyCategories});
 });
 
 mainRouter.get(`/register`, (req, res)=> res.render(`sign-up`));

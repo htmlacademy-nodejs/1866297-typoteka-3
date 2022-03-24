@@ -18,20 +18,21 @@ class API {
     const response = await this._http.request({url, ...options});
     return response.data;
   }
-  getArticles() {
-    return this._load(`/articles`);
+  async getArticles(data) {
+    const comments = data ? data.comments : false;
+    return this._load(`/articles`, {params: {comments}});
   }
 
-  getArticle(id) {
-    return this._load(`/articles/${id}`);
+  async getArticle(id, comments) {
+    return this._load(`/articles/${id}`, {params: {comments}});
   }
 
-  search(query) {
+  async search(query) {
     return this._load(`/search`, {params: {query}});
   }
 
-  async getCategories() {
-    return await this._load(`/category`);
+  async getCategories(count) {
+    return await this._load(`/category`, {params: {count}});
   }
 
   async createArticle(data) {

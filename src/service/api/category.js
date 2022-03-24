@@ -7,8 +7,9 @@ const categoryApi = (app, service) => {
   const route = new Router();
   app.use(`/category`, route);
 
-  route.get(`/`, (req, res) => {
-    const categories = service.findAll();
+  route.get(`/`, async (req, res) => {
+    const {count} = req.query;
+    const categories = await service.findAll(count);
     res.status(HttpCode.OK).json(categories);
   });
 };

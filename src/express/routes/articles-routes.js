@@ -46,6 +46,17 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
   ]);
   res.render(`edit-post`, {article, categories});
 });
-articlesRouter.get(`/:id`, (req, res) => res.render(`post-detail`));
+articlesRouter.get(`/:id`, async (req, res) => {
+  const {id} = req.params;
+  const [article, categories] = await Promise.all([
+    api.getArticle(id, true),
+    api.getCategories(true),
+  ]);
+  const presentCategories = article.categories.map((category) => category.id);
+  const categoriesWithCount = categories.filter((category) =>
+    presentCategories.includes(category.id)
+  );
+  res.render(`post-detail`, {article, categories: categoriesWithCount});
+});
 
 module.exports = articlesRouter;

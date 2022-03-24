@@ -9,20 +9,21 @@ const articlesApi = (app, articleService, commentService) => {
   const route = new Router();
   app.use(`/articles`, route);
 
-  route.get(`/`, (req, res) => {
-    const articles = articleService.findAll();
+  route.get(`/`, async (req, res) => {
+    const {comments} = req.query;
+    const articles = await articleService.findAll(comments);
     res.status(HttpCode.OK).json(articles);
   });
-  route.post(`/`, articleValidator, (req, res) => {
-    const newArticle = articleService.create(req.body);
+  route.post(`/`, articleValidator, async (req, res) => {
+    const newArticle = await articleService.create(req.body);
     res.status(HttpCode.CREATED).json(newArticle);
   });
   route.get(`/:articleId`, articleExists(articleService), (req, res) => {
     res.status(HttpCode.OK).json(res.locals.article);
   });
-  route.put(`/:articleId`, articleValidator, (req, res) => {
+  route.put(`/:articleId`, articleValidator, async (req, res) => {
     const {articleId} = req.params;
-    const existArticle = articleService.findOne(articleId);
+    const existArticle = await articleService.findOne(articleId);
 
     if (!existArticle) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found with ${articleId}`);
@@ -31,9 +32,9 @@ const articlesApi = (app, articleService, commentService) => {
     const updatedArticle = articleService.update(articleId, req.body);
     return res.status(HttpCode.OK).json(updatedArticle);
   });
-  route.delete(`/:articleId`, (req, res) => {
+  route.delete(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
-    const article = articleService.delete(articleId);
+    const article = await articleService.delete(articleId);
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Article not found`);
     }
@@ -42,18 +43,18 @@ const articlesApi = (app, articleService, commentService) => {
   route.get(
       `/:articleId/comments`,
       articleExists(articleService),
-      (req, res) => {
-        const comments = commentService.findAll(res.locals.article);
+      async (req, res) => {
+        const comments = await commentService.findAll(res.locals.article);
         res.status(HttpCode.OK).json(comments);
       }
   );
   route.delete(
       `/:articleId/comments/:commentId`,
       articleExists(articleService),
-      (req, res) => {
+      async (req, res) => {
         const {commentId} = req.params;
         const {article} = res.locals;
-        const deletedComment = commentService.delete(article, commentId);
+        const deletedComment = await commentService.delete(article, commentId);
 
         if (!deletedComment) {
           return res
@@ -67,9 +68,9 @@ const articlesApi = (app, articleService, commentService) => {
   route.post(
       `/:articleId/comments`,
       [articleExists(articleService), commentValidator],
-      (req, res) => {
+      async (req, res) => {
         const {article} = res.locals;
-        const newComment = commentService.create(article, req.body);
+        const newComment = await commentService.create(article, req.body);
         res.status(HttpCode.CREATED).json(newComment);
       }
   );
