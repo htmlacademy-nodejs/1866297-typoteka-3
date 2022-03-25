@@ -1,9 +1,8 @@
 "use strict";
 
 const sequelize = require(`../lib/sequelize`);
-const defineModels = require(`../models`);
-const Aliase = require(`../models/aliase`);
 const {getLogger} = require(`../lib/logger.js`);
+const initDatabase = require(`../lib/init-db.js`);
 const logger = getLogger({});
 
 const fs = require(`fs`).promises;
@@ -109,30 +108,6 @@ module.exports = {
       },
     ];
 
-    const {Category, Article, User} = defineModels(sequelize);
-
-    await sequelize.sync({force: true});
-
-    const categoryModels = await Category.bulkCreate(
-        categories.map((item) => ({name: item}))
-    );
-    const categoryIdByName = categoryModels.reduce(
-        (acc, next) => {
-          acc[next.name] = next.id;
-          return acc;
-        },
-        {}
-    );
-
-    const userModels = await User.bulkCreate(users, {
-      include: [Aliase.ARTICLES, Aliase.COMMENTS],
-    });
-
-    const userIdByEmail = userModels.reduce((acc, next) => {
-      acc[next.email] = next.id;
-      return acc;
-    }, {});
-
     const [count] = args;
     const countArticles = Number.parseInt(count, 10) || DEFAULT_COUNT;
     const articles = generateArticles(
@@ -144,26 +119,6 @@ module.exports = {
         users
     );
 
-    articles.forEach((article) => {
-      article.userId = userIdByEmail[article.user];
-      article.comments.forEach((comment) => {
-        comment.userId = userIdByEmail[comment.user];
-      });
-    });
-
-    const articlePromises = articles.map(async (article) => {
-      const articleModel = await Article.create(article, {
-        include: [Aliase.COMMENTS],
-      });
-      await articleModel.addCategories(
-          article.categories.map((name) => categoryIdByName[name])
-      );
-    });
-
-    try {
-      await Promise.all(articlePromises);
-    } catch (err) {
-      console.log(err.message);
-    }
+    return initDatabase(sequelize, {articles, categories, users});
   },
 };
