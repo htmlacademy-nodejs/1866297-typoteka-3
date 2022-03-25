@@ -11,8 +11,11 @@ const chalk = require(`chalk`);
 const {getRandomInt, shuffle} = require(`../../utils`);
 
 const DEFAULT_COUNT = 1;
-const MAX_ANNOUNCE_COUNT = 5;
+const MAX_ANNOUNCE_COUNT = 3;
+const MIN_TEXT_COUNT = 5;
+const MAX_TEXT_COUNT = 10;
 const MAX_COMMENTS = 4;
+const MAX_COMMENTS_AMOUNT = 2;
 
 const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
@@ -30,17 +33,18 @@ const readContent = async (filePath) => {
 };
 
 const generateComments = (amount, comments, users) => {
-  const commentsLength = comments.length;
   return Array.from({length: amount}, () => ({
-    userId: users[getRandomInt(0, users.length - 1)].id,
+    user: users[getRandomInt(0, users.length - 1)].email,
     text: shuffle(comments.slice())
-      .slice(0, getRandomInt(1, commentsLength))
+      .slice(0, getRandomInt(1, MAX_COMMENTS_AMOUNT))
       .join(` `),
   }));
 };
 
-const getRandomSubArray = (array) => {
-  return shuffle(array.slice()).slice(0, getRandomInt(1, array.length - 1));
+const getRandomSubArray = (array, min, max) => {
+  const start = min ? min : 1;
+  const end = max ? max : array.length - 1;
+  return shuffle(array.slice()).slice(0, getRandomInt(start, end));
 };
 
 const generateArticles = (
@@ -52,14 +56,16 @@ const generateArticles = (
     users
 ) =>
   Array.from({length: count}, (_, index) => ({
-    userId: users[getRandomInt(0, users.length - 1)].id,
+    user: users[getRandomInt(0, users.length - 1)].email,
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments, users),
     title: titles[getRandomInt(0, titles.length - 1)],
     photo: `image${index + 1}.jpg`,
     announce: shuffle(sentences.slice())
       .slice(0, getRandomInt(1, MAX_ANNOUNCE_COUNT))
       .join(` `),
-    fullText: getRandomSubArray(sentences).join(` `),
+    fullText: getRandomSubArray(sentences, MIN_TEXT_COUNT, MAX_TEXT_COUNT).join(
+        ` `
+    ),
     categories: getRandomSubArray(categories),
   }));
 
@@ -137,6 +143,13 @@ module.exports = {
         comments,
         users
     );
+
+    articles.forEach((article) => {
+      article.userId = userIdByEmail[article.user];
+      article.comments.forEach((comment) => {
+        comment.userId = userIdByEmail[comment.user];
+      });
+    });
 
     const articlePromises = articles.map(async (article) => {
       const articleModel = await Article.create(article, {
