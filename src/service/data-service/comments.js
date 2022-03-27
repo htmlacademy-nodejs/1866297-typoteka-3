@@ -14,14 +14,14 @@ class CommentsService {
   }
 
   async drop(id) {
-    const deletedRows = this._Comment.destroy({
+    const deletedRows = await this._Comment.destroy({
       where: {id},
     });
     return !!deletedRows;
   }
 
-  findAll(articleId) {
-    return this._Comment.findAll({
+  async findAll(articleId) {
+    return await this._Comment.findAll({
       where: {articleId},
       raw: true,
     });

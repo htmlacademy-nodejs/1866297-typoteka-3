@@ -5,15 +5,15 @@ const {dataAsserts: {notEmptyString, notEmptyArray}} = require(`../../utils`);
 
 const articleKeys = [
   `title`,
-  `createdDate`,
-  `category`,
+  `categories`,
+  `fullText`,
   `announce`,
 ];
 
 const articleKeysValidators = {
   title: notEmptyString,
-  createdDate: notEmptyString,
-  category: notEmptyArray,
+  fullText: notEmptyString,
+  categories: notEmptyArray,
   announce: notEmptyString,
 };
 
@@ -27,6 +27,5 @@ module.exports = (req, res, next) => {
   if (!keysExists || !isValidInput) {
     return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
   }
-
   return next();
 };

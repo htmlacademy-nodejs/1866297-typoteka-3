@@ -22,12 +22,12 @@ class ArticleService {
     return !!deletedRows;
   }
 
-  findOne(id, needComments) {
+  async findOne(id, needComments) {
     const include = [Aliase.CATEGORIES];
     if (needComments) {
       include.push(Aliase.COMMENTS);
     }
-    return this._Article.findByPk(id, {include});
+    return await this._Article.findByPk(id, {include});
   }
 
   async update(id, article) {

@@ -15,7 +15,9 @@ const articlesApi = (app, articleService, commentService) => {
     res.status(HttpCode.OK).json(articles);
   });
   route.post(`/`, articleValidator, async (req, res) => {
+    console.log(req.body);
     const newArticle = await articleService.create(req.body);
+    console.log(`newArticle`, newArticle);
     res.status(HttpCode.CREATED).json(newArticle);
   });
   route.get(`/:articleId`, articleExists(articleService), (req, res) => {
@@ -34,7 +36,7 @@ const articlesApi = (app, articleService, commentService) => {
   });
   route.delete(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
-    const article = await articleService.delete(articleId);
+    const article = await articleService.drop(articleId);
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Article not found`);
     }
@@ -44,7 +46,7 @@ const articlesApi = (app, articleService, commentService) => {
       `/:articleId/comments`,
       articleExists(articleService),
       async (req, res) => {
-        const comments = await commentService.findAll(res.locals.article);
+        const comments = await commentService.findAll(res.locals.article.id);
         res.status(HttpCode.OK).json(comments);
       }
   );
@@ -54,7 +56,7 @@ const articlesApi = (app, articleService, commentService) => {
       async (req, res) => {
         const {commentId} = req.params;
         const {article} = res.locals;
-        const deletedComment = await commentService.delete(article, commentId);
+        const deletedComment = await commentService.drop(article.id, commentId);
 
         if (!deletedComment) {
           return res
@@ -70,7 +72,7 @@ const articlesApi = (app, articleService, commentService) => {
       [articleExists(articleService), commentValidator],
       async (req, res) => {
         const {article} = res.locals;
-        const newComment = await commentService.create(article, req.body);
+        const newComment = await commentService.create(article.id, req.body);
         res.status(HttpCode.CREATED).json(newComment);
       }
   );
