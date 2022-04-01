@@ -18,9 +18,8 @@ class API {
     const response = await this._http.request({url, ...options});
     return response.data;
   }
-  async getArticles(data) {
-    const comments = data ? data.comments : false;
-    return this._load(`/articles`, {params: {comments}});
+  async getArticles({offset, limit, comments}) {
+    return this._load(`/articles`, {params: {comments, offset, limit}});
   }
 
   async getArticle(id, comments) {
