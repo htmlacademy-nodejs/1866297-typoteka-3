@@ -15,9 +15,7 @@ const articlesApi = (app, articleService, commentService) => {
     res.status(HttpCode.OK).json(articles);
   });
   route.post(`/`, articleValidator, async (req, res) => {
-    console.log(req.body);
     const newArticle = await articleService.create(req.body);
-    console.log(`newArticle`, newArticle);
     res.status(HttpCode.CREATED).json(newArticle);
   });
   route.get(`/:articleId`, articleExists(articleService), (req, res) => {

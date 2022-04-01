@@ -27,7 +27,7 @@ class ArticleService {
     if (needComments) {
       include.push(Aliase.COMMENTS);
     }
-    return await this._Article.findByPk(id, {include});
+    return this._Article.findByPk(id, {include});
   }
 
   async update(id, article) {

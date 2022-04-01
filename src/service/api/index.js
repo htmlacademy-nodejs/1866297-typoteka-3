@@ -16,9 +16,9 @@ const {
 
 defineModels(sequelize);
 
-const app = new Router();
 
 module.exports = async () => {
+  const app = new Router();
   category(app, new CategoryService(sequelize));
   search(app, new SearchService(sequelize));
   articles(app, new ArticleService(sequelize), new CommentsService(sequelize));
