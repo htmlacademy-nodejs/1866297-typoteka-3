@@ -3,106 +3,42 @@ extends layout.pug
 block content
   .wrapper
     header.header
-      a.header__logo.logo(href='#')
+      a.header__logo.logo(href='/')
         img(src='img/icons/logo.svg' alt='логотип Тайпотеки')
       a.header__registration(href='#') Регистрация
       a.header__enter(href='#') Вход с паролем
       a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
     main.articles-category
-      h1 Бизнес
+      h1 #{currentCategory.name}
       section.articles-category__theme-list
         h2.visually-hidden Список тем
         ul.themes
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Автомобили
-              sup 88
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Удаленная работа
-              sup 13
-          li.themes__item
-            a.themes__item-link.themes__item-link--active
-              | Бизнес
-              sup 13
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Путешествия
-              sup 13
-          li.themes__item
-            a.themes__item-link.themes__item-link--padding(href='#')
-              | Дизайн и обустройство
-              sup 13
-          li.themes__item
-            a.themes__item-link(href='#')
-              | Производство игрушек
-              sup 22
-          li.themes__item
-            a.themes__item-link(href='#')
-              | UX & UI
-              sup 22
+          each category of categories
+            li.themes__item
+              a(class=`themes__item-link ${category.id === currentCategory.id ? 'themes__item-link--active' : ''}` href=`/articles/category/${category.id}`)
+                | #{category.name}
+                sup #{category.count}
       section.articles-category__list.preview
         h2.visually-hidden Список превью статей
         ul.preview__list
-          li.preview__item
-            ul.preview__breadcrumbs
-              li.preview__breadcrumbs-item
-                a.preview__breadcrumbs-link(href='#') Дизайн
-            .preview__background
-              img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
-            time.preview__time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-            h3.preview__name
-              a.preview__name-link(href='#') Я ничего не понял
-            p.preview__text Если вы сами пишете такие письма — почитайте Ильяхова. А в этой заметке я расскажу про заклинание, которое от таких писем помогает.
-            a.preview__comment(href='#')
-              | Комментарии
-              span.preview__cloud
-              |
-              b.preview__comment-count 12
-          li.preview__item
-            ul.preview__breadcrumbs
-              li.preview__breadcrumbs-item
-                a.preview__breadcrumbs-link(href='#') Дизайн
-            .preview__background
-              img.preview__background-image(src='img/sea@1x.jpg' width='460' height='240' srcset='img/sea@1x.jpg, img/sea@2x.jpg 2x' alt='Фотография моря')
-            time.preview__time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-            h3.preview__name
-              a.preview__name-link(href='#') Путешествие в Голландию
-            p.preview__text Если вы сами пишете такие письма — почитайте Ильяхова. А в этой заметке я расскажу про заклинание, которое от таких писем помогает.
-            a.preview__comment(href='#')
-              | Комментарии
-              span.preview__cloud
-              |
-              b.preview__comment-count 12
-          li.preview__item.preview__item--noimage
-            ul.preview__breadcrumbs
-              li.preview__breadcrumbs-item
-                a.preview__breadcrumbs-link(href='#') Дизайн
-            time.preview__time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-            h3.preview__name
-              a.preview__name-link(href='#') Путин подписал закон о предустановке российских приложений на смартфоны и другую электронику
-            p.preview__text Президент России Владимир Путин подписал закон об обязательной предустановке российского программного обеспечения на электронную технику, продаваемую в России. Документ опубликован на официальном сайте правовой информации.
-            a.preview__comment(href='#')
-              | Комментарии
-              span.preview__cloud
-              |
-              b.preview__comment-count 12
-          li.preview__item
-            ul.preview__breadcrumbs
-              li.preview__breadcrumbs-item
-                a.preview__breadcrumbs-link(href='#') Дизайн
-              li.preview__breadcrumbs-item
-                a.preview__breadcrumbs-link(href='#') Удаленная работа
-            .preview__background
-              img(src='img/forest@1x.jpg' width='460' height='240' srcset='img/forest@1x.jpg, img/forest@2x.jpg 2x' alt='Фотография леса')
-            time.preview__time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-            h3.preview__name
-              a.preview__name-link(href='#') Я понял, но не все
-            p.preview__text Если вы сами пишете такие письма — почитайте Ильяхова. А в этой заметке я расскажу про заклинание, которое от таких писем помогает.
-            a.preview__comment(href='#')
-              | Комментарии
-              span.preview__cloud
-              |
-              b.preview__comment-count 12
+          each article of articles
+            li.preview__item
+              ul.preview__breadcrumbs
+                each category in article.categories
+                  li.preview__breadcrumbs-item
+                    a.preview__breadcrumbs-link(href='#') #{category}
+              .preview__background
+                img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
+              +formatDate(article.createdAt,'preview__time')
+              h3.preview__name
+                a.preview__name-link(href=`/articles/${article.id}`) #{article.title}
+              p.preview__text #{article.announce}
+              a.preview__comment(href='#')
+                | Комментарии
+                span.preview__cloud
+                |
+                b.preview__comment-count #{article.commentsCount}
+      +pagination(page, totalPages, 2, `?`)
+
 
 

@@ -26,6 +26,15 @@ class API {
     return this._load(`/articles/${id}`, {params: {comments}});
   }
 
+  async getArticlesByCategoryId({offset, limit, id}) {
+    return this._load(`/articles/categories/${id}`, {
+      params: {
+        offset,
+        limit,
+      },
+    });
+  }
+
   async search(query) {
     return this._load(`/search`, {params: {query}});
   }

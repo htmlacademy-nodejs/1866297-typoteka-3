@@ -79,6 +79,16 @@ const articlesApi = (app, articleService, commentService) => {
         res.status(HttpCode.CREATED).json(newComment);
       }
   );
+  route.get(`/categories/:id`, async (req, res) => {
+    const {id} = req.params;
+    const {offset, limit} = req.query;
+    const articles = await articleService.findPageByCategory({
+      offset,
+      limit,
+      id,
+    });
+    res.status(HttpCode.OK).json(articles);
+  });
 };
 
 module.exports = articlesApi;

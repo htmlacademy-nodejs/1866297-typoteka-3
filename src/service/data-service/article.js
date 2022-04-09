@@ -1,9 +1,10 @@
-'use strict';
+"use strict";
 
 const Aliase = require(`../models/aliase`);
 
 class ArticleService {
   constructor(sequelize) {
+    this.sequelize = sequelize;
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._Category = sequelize.models.Category;
@@ -64,6 +65,53 @@ class ArticleService {
       distinct: true,
     });
     return {count, articles: rows};
+  }
+  async findPageByCategory({limit, offset, id}) {
+    const [[rawArticles], [resultCount]] = await Promise.all([
+      this.sequelize.query(
+          `
+    SELECT * FROM (
+	SELECT
+		"articles".*,
+		COUNT("comments".*) AS "commentsCount",
+		STRING_AGG(DISTINCT "categories".name, ', ') AS "categoriesNames",
+		STRING_AGG(DISTINCT "categories".id::varchar, ',') AS "categoriesIds"
+	  FROM "articles"
+      LEFT JOIN "article_categories" ON "article_categories"."ArticleId"="articles".id
+	  LEFT JOIN "comments" ON "comments"."articleId"="articles".id
+	  LEFT JOIN "categories" ON "categories".id = "article_categories"."CategoryId"
+	  GROUP BY "articles".id
+) AS "Articles"
+	  WHERE "categoriesIds" LIKE '%:id%'
+  	  LIMIT :limit
+	  OFFSET :offset;`,
+          {
+            replacements: {
+              id: Number(id),
+              limit,
+              offset,
+            },
+          }
+      ),
+      this.sequelize.query(`SELECT COUNT(*) FROM "articles"
+      LEFT JOIN "article_categories" ON "article_categories"."ArticleId"="articles".id
+	  JOIN "categories" ON "categories".id = "article_categories"."CategoryId"
+      WHERE "article_categories"."CategoryId"=$id;`, {
+        bind: {
+          id
+        }
+      }),
+    ]);
+    const articles = rawArticles.map((article) => {
+      return {
+        ...article,
+        categories: article.categoriesNames.split(`, `)
+      };
+    });
+    return {
+      count: resultCount[0].count,
+      articles,
+    };
   }
 }
 
