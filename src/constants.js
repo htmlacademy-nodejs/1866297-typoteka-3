@@ -21,5 +21,11 @@ module.exports = {
   Env: {
     DEVELOPMENT: `development`,
     PRODUCTION: `production`
+  },
+  HttpMethod: {
+    GET: `GET`,
+    POST: `POST`,
+    PUT: `PUT`,
+    DELETE: `DELETE`
   }
 };

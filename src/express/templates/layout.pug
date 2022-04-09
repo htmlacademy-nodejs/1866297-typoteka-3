@@ -14,7 +14,18 @@ html(lang='ru')
       a.active{
         pointer-events: none;
       }
+      .server-error{
+        border-radius: 10px;
+        color: white;
+        background-color: tomato;
+        margin: 20px 0;
+        padding: 10px;
+      }
 body
+  mixin insertErrorMessage(messages)
+    if messages
+      each message of messages
+        .server-error= message
   mixin formatDate(date, className, attr)
     time(class=className, datatime=(attr || false)) #{date.split('T').join(", ").replace(/\.\d+?Z/, "")}
 

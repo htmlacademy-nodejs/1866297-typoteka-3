@@ -16,7 +16,7 @@ block content
               ul.post__themes.themes
                 each category of categories
                   li.themes__item
-                    a.themes__item-link(href='#')
+                    a.themes__item-link(href=`/articles/category/${category.id}`)
                       | #{category.name}
                       sup #{category.count}
                     button.themes__remove-btn(type='button') Удалить категорию

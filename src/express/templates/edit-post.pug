@@ -35,7 +35,7 @@ block content
                   .new-publication__category-wrapper
                     each category, index in categories
                       .new-publication__checkbox.new-publication__checkbox--auto
-                        input(id=`checkbox-auto-${index + 1}` type='checkbox' name=`category-${index + 1}` checked=(article ? article.categories.includes(category.name) : ""))
+                        input(id=`checkbox-auto-${index + 1}` type='checkbox' name=`categories` value=category.id checked=(article ? article.categories.includes(String(category.id)) : ""))
                         label(for=`checkbox-auto-${index + 1}`) #{category.name}
                     a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
                 .form__wrapper.form__wrapper--text
@@ -46,5 +46,6 @@ block content
                     label
                       textarea(rows='10' name='full-text' placeholder='Полный текст публикации').
                         #{article ? article.fullText : ""}
+            +insertErrorMessage(validationMessages)
 
 

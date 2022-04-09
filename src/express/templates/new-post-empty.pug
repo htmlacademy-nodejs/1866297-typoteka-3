@@ -15,7 +15,7 @@ block content
                   .new-publication__date-form-division
                     .new-publication__date-block
                       label(for='new-publication-date' aria-label='Календарь')
-                      input#new-publication-date(type='text' name='created-date' placeholder='2022-02-11')
+                      input#new-publication-date(type='text' name='createdAt' placeholder='2022-02-11')
                 button.new-publication__button.button.button--colored(type='submit') Опубликовать
               a.popup__button.button.button--popup-close(aria-label='Закрыть окно') Закрыть окно
               .new-publication__form.form
@@ -33,8 +33,8 @@ block content
                   .new-publication__category-wrapper
                     each category, index in categories
                       .new-publication__checkbox.new-publication__checkbox--auto
-                        input(id=`checkbox-auto-${index + 1}` type='checkbox' name=`category` value=category)
-                        label(for=`checkbox-auto-${index + 1}`) #{category}
+                        input(id=`checkbox-auto-${index + 1}` type='checkbox' name=`categories` value=category.id)
+                        label(for=`checkbox-auto-${index + 1}`) #{category.name}
                     a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
                 .form__wrapper.form__wrapper--text
                   .form__field.form__field--publication-text
@@ -43,5 +43,6 @@ block content
                   .form__field.form__field--publication-text
                     label
                       textarea(rows='10' name='full-text' placeholder='Полный текст публикации')
+              +insertErrorMessage(validationMessages)
 
 

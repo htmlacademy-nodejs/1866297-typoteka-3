@@ -2,7 +2,12 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const {articleValidator, articleExists, commentValidator} = require(`../middlewares`);
+const {
+  articleValidator,
+  articleExists,
+  commentValidator,
+  routeParamsValidator,
+} = require(`../middlewares`);
 
 
 const articlesApi = (app, articleService, commentService) => {
@@ -10,7 +15,7 @@ const articlesApi = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const {offset, limit, comments} = req.query;
+    const {offset, limit, comments = false} = req.query;
     let articles;
     if (limit || offset) {
       articles = await articleService.findPage({offset, limit, comments});
@@ -23,10 +28,14 @@ const articlesApi = (app, articleService, commentService) => {
     const newArticle = await articleService.create(req.body);
     res.status(HttpCode.CREATED).json(newArticle);
   });
-  route.get(`/:articleId`, articleExists(articleService), (req, res) => {
-    res.status(HttpCode.OK).json(res.locals.article);
-  });
-  route.put(`/:articleId`, articleValidator, async (req, res) => {
+  route.get(
+      `/:articleId`,
+      [routeParamsValidator, articleExists(articleService)],
+      (req, res) => {
+        res.status(HttpCode.OK).json(res.locals.article);
+      }
+  );
+  route.put(`/:articleId`, [routeParamsValidator, articleValidator], async (req, res) => {
     const {articleId} = req.params;
     const existArticle = await articleService.findOne(articleId);
 
@@ -37,7 +46,7 @@ const articlesApi = (app, articleService, commentService) => {
     const updatedArticle = articleService.update(articleId, req.body);
     return res.status(HttpCode.OK).json(updatedArticle);
   });
-  route.delete(`/:articleId`, async (req, res) => {
+  route.delete(`/:articleId`, [routeParamsValidator], async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
     if (!article) {
@@ -47,7 +56,7 @@ const articlesApi = (app, articleService, commentService) => {
   });
   route.get(
       `/:articleId/comments`,
-      articleExists(articleService),
+      [routeParamsValidator, articleExists(articleService)],
       async (req, res) => {
         const comments = await commentService.findAll(res.locals.article.id);
         res.status(HttpCode.OK).json(comments);
@@ -55,7 +64,7 @@ const articlesApi = (app, articleService, commentService) => {
   );
   route.delete(
       `/:articleId/comments/:commentId`,
-      articleExists(articleService),
+      [routeParamsValidator, articleExists(articleService)],
       async (req, res) => {
         const {commentId} = req.params;
         const {article} = res.locals;
@@ -72,20 +81,20 @@ const articlesApi = (app, articleService, commentService) => {
   );
   route.post(
       `/:articleId/comments`,
-      [articleExists(articleService), commentValidator],
+      [routeParamsValidator, articleExists(articleService), commentValidator],
       async (req, res) => {
         const {article} = res.locals;
         const newComment = await commentService.create(article.id, req.body);
         res.status(HttpCode.CREATED).json(newComment);
       }
   );
-  route.get(`/categories/:id`, async (req, res) => {
-    const {id} = req.params;
+  route.get(`/categories/:categoryId`, [routeParamsValidator], async (req, res) => {
+    const {categoryId} = req.params;
     const {offset, limit} = req.query;
     const articles = await articleService.findPageByCategory({
       offset,
       limit,
-      id,
+      id: categoryId,
     });
     res.status(HttpCode.OK).json(articles);
   });

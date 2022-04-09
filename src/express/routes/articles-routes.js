@@ -1,6 +1,6 @@
 "use strict";
 
-const {ensureArray} = require(`../../utils`);
+const {ensureArray, prepareErrors} = require(`../../utils`);
 const {Router} = require(`express`);
 const uploadMiddleware = require(`../middlewares/upload`);
 const articlesRouter = new Router();
@@ -60,23 +60,26 @@ articlesRouter.post(
     uploadMiddleware.single(`upload`),
     async (req, res) => {
       const {body, file} = req;
+
       const articleData = {
-        upload: file ? file.filename : ``,
-        createdDate: body[`created-date`],
+        photo: file ? file.filename : ``,
         title: body.title,
         announce: body.announce,
         fullText: body[`full-text`],
-        category: ensureArray(body.category),
+        categories: ensureArray(body.categories),
       };
 
       try {
         await api.createArticle(articleData);
         res.redirect(302, `/my`);
-      } catch (error) {
+      } catch (errors) {
+        const validationMessages = prepareErrors(errors);
         const categories = await api.getCategories();
+
         res.render(`edit-post`, {
           categories,
           article: articleData,
+          validationMessages,
         });
       }
     }

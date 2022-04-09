@@ -73,7 +73,7 @@ class ArticleService {
     SELECT * FROM (
 	SELECT
 		"articles".*,
-		COUNT("comments".*) AS "commentsCount",
+		COUNT(DISTINCT "comments".id) AS "commentsCount",
 		STRING_AGG(DISTINCT "categories".name, ', ') AS "categoriesNames",
 		STRING_AGG(DISTINCT "categories".id::varchar, ',') AS "categoriesIds"
 	  FROM "articles"
@@ -93,19 +93,22 @@ class ArticleService {
             },
           }
       ),
-      this.sequelize.query(`SELECT COUNT(*) FROM "articles"
+      this.sequelize.query(
+          `SELECT COUNT(*) FROM "articles"
       LEFT JOIN "article_categories" ON "article_categories"."ArticleId"="articles".id
 	  JOIN "categories" ON "categories".id = "article_categories"."CategoryId"
-      WHERE "article_categories"."CategoryId"=$id;`, {
-        bind: {
-          id
-        }
-      }),
+      WHERE "article_categories"."CategoryId"=$id;`,
+          {
+            bind: {
+              id,
+            },
+          }
+      ),
     ]);
     const articles = rawArticles.map((article) => {
       return {
         ...article,
-        categories: article.categoriesNames.split(`, `)
+        categories: article.categoriesNames.split(`, `),
       };
     });
     return {
