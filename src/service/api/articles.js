@@ -67,8 +67,7 @@ const articlesApi = (app, articleService, commentService) => {
       [routeParamsValidator, articleExists(articleService)],
       async (req, res) => {
         const {commentId} = req.params;
-        const {article} = res.locals;
-        const deletedComment = await commentService.drop(article.id, commentId);
+        const deletedComment = await commentService.drop(commentId);
 
         if (!deletedComment) {
           return res
