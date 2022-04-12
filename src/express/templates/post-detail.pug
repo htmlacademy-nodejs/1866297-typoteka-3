@@ -38,11 +38,13 @@ block content
                       +formatDate(comment.createdAt,'comments__date')
                     p.comments__message #{comment.text}
             .comments__footer.comments__footer--user
-              form(action='#' method='POST')
+              form(action=`${id}/comments` method='POST' enctype="application/x-www-form-urlencoded")
                 .comments__avatar.avatar
                   img(src='img/avatar-2.png' alt='аватар пользователя')
                 label
-                  textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
+                  textarea(rows='1' name='comment' placeholder='Присоединиться к обсуждению')
                 button.comments__button.button.button--colored(type='submit') Опубликовать
+              if(validationMessages)
+                p.comments__error #{validationMessages}
 
 
