@@ -1,9 +1,7 @@
 "use strict";
 
-
 const express = require(`express`);
 const path = require(`path`);
-const bodyParser = require(`body-parser`);
 
 const DEFAULT_PORT = 8080;
 const PUBLIC_DIR = `public`;
@@ -17,7 +15,7 @@ const myRouter = require(`./routes/my-routes.js`);
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
 app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: false}));
 
 app.use(`/`, mainRouter);
 app.use(`/my`, myRouter);

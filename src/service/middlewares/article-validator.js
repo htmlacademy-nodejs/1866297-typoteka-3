@@ -1,7 +1,7 @@
 "use strict";
 
 const Joi = require(`joi`);
-const {HttpCode} = require(`../../constants`);
+const schemaValidator = require(`../lib/schema-validator`);
 
 const ErrorArticleMessage = {
   CATEGORIES: `Не выбрана ни одна категория публикации`,
@@ -49,13 +49,5 @@ const schema = Joi.object({
 module.exports = (req, res, next) => {
   const newArticle = req.body;
 
-  const {error} = schema.validate(newArticle, {abortEarly: false});
-
-  if (error) {
-    return res
-        .status(HttpCode.BAD_REQUEST)
-        .send(error.details.map((err) => err.message).join(`\n`));
-  }
-
-  return next();
+  return schemaValidator({res, next, schema, data: newArticle, abortEarly: false});
 };

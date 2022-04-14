@@ -1,7 +1,7 @@
 "use strict";
 
-const {HttpCode} = require(`../../constants`);
 const Joi = require(`joi`);
+const schemaValidator = require(`../lib/schema-validator`);
 
 const ErrorCommentMessage = {
   TEXT: `Комментарий содержит меньше 20 символов`,
@@ -17,13 +17,11 @@ const schema = Joi.object({
 module.exports = async (req, res, next) => {
   const comment = req.body;
 
-  const {error} = await schema.validate(comment, {abortEarly: false});
-
-  if (error) {
-    return res
-      .status(HttpCode.BAD_REQUEST)
-      .send(error.details.map((err) => err.message).join(`\n`));
-  }
-
-  return next();
+  return schemaValidator({
+    res,
+    next,
+    schema,
+    data: comment,
+    abortEarly: false,
+  });
 };
