@@ -3,6 +3,7 @@
 const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger.js`);
 const initDatabase = require(`../lib/init-db.js`);
+const passwordUtils = require(`../lib/password`);
 const logger = getLogger({});
 
 const fs = require(`fs`).promises;
@@ -87,21 +88,21 @@ module.exports = {
     const users = [
       {
         email: `ivanov@example.com`,
-        password: `ivanov`,
+        password: await passwordUtils.hash(`ivanov`),
         firstName: `Иван`,
         lastName: `Иванов`,
         avatar: `avatar1.jpg`,
       },
       {
         email: `petrov@example.com`,
-        password: `petrov`,
+        password: await passwordUtils.hash(`petrov`),
         firstName: `Пётр`,
         lastName: `Петров`,
         avatar: `avatar2.jpg`,
       },
       {
         email: `sidorov@example.com`,
-        password: `sidorov`,
+        password: await passwordUtils.hash(`sidorov`),
         firstName: `Артём`,
         lastName: `Сидоров`,
         avatar: `avatar3.jpg`,

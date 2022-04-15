@@ -25,7 +25,7 @@ const define = (sequelize) => User.init({
   avatar: {
     // eslint-disable-next-line new-cap
     type: DataTypes.STRING(50),
-    allowNull: false
+    allowNull: true
   },
 }, {sequelize, modelName: `User`, tableName: `users`});
 

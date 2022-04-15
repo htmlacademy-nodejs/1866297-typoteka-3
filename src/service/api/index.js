@@ -3,6 +3,7 @@ const {Router} = require(`express`);
 const category = require(`../api/category`);
 const articles = require(`../api/articles`);
 const search = require(`../api/search`);
+const user = require(`../api/user`);
 const sequelize = require(`../lib/sequelize`);
 const defineModels = require(`../models`);
 
@@ -11,6 +12,7 @@ const {
   SearchService,
   ArticleService,
   CommentsService,
+  UserService,
 } = require(`../data-service`);
 
 
@@ -22,5 +24,6 @@ module.exports = async () => {
   category(app, new CategoryService(sequelize));
   search(app, new SearchService(sequelize));
   articles(app, new ArticleService(sequelize), new CommentsService(sequelize));
+  user(app, new UserService(sequelize));
   return app;
 };

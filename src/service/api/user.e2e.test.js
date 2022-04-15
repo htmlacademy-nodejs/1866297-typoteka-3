@@ -4,9 +4,8 @@ const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
 
 const initDB = require(`../lib/init-db`);
-const articles = require(`./articles`);
-const DataService = require(`../data-service/article`);
-const CommentsService = require(`../data-service/comments`);
+const user = require(`./user`);
+const UserService = require(`../data-service/user`);
 const {HttpCode} = require(`../../constants`);
 
 const mockArticles = [
@@ -169,302 +168,104 @@ const createAPI = async () => {
     articles: mockArticles,
     users: mockUsers,
   });
-  articles(app, new DataService(mockDB), new CommentsService(mockDB));
+  user(app, new UserService(mockDB));
   return app;
 };
 
-describe(`API создает публикацию если переданные данные валидны`, () => {
-  const newArticle = {
-    userId: 1,
-    title: `Учим HTML и CSS без регистрации и смс`,
-    photo: `photo13.jpg`,
-    categories: [1, 3],
-    fullText: `Просто действуйте. Маленькими шагами. Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин, гармоническая пропорция.`,
-    announce: `Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами.`,
+describe(`API создает пользователя если данные валидны`, () => {
+  const validUserData = {
+    firstName: `Бильбо`,
+    lastName: `Беггинс`,
+    email: `bilbo@example.com`,
+    password: `bilbobaggins`,
+    passwordRepeated: `bilbobaggins`,
+    avatar: `bilbo.jpg`,
   };
 
   let response;
+
+  beforeAll(async () => {
+    let app = await createAPI();
+    response = await request(app).post(`/user`).send(validUserData);
+  });
+
+  test(`Status code 201`, () =>
+    expect(response.statusCode).toBe(HttpCode.CREATED));
+});
+
+describe(`API не позволяет создать пользователя если данные не валидны`, () => {
+  const validUserData = {
+    firstName: `Бильбо`,
+    lastName: `Беггинс`,
+    email: `bilbo@example.com`,
+    password: `bilbobaggins`,
+    passwordRepeated: `bilbobaggins`,
+    avatar: `bilbo.jpg`,
+  };
+
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app).post(`/articles`).send(newArticle);
   });
 
-  test(`Статус код 201`, () => {
-    expect(response.statusCode).toBe(HttpCode.CREATED);
+  test(`Без наличия какого-либо обязательного поля возвращает 400`, async () => {
+    const dataWithoutAvatar = {
+      firstName: `Бильбо`,
+      lastName: `Беггинс`,
+      email: `bilbo@example.com`,
+      password: `bilbobaggins`,
+      passwordRepeated: `bilbobaggins`,
+    };
+    for (const key of Object.keys(dataWithoutAvatar)) {
+      const badUserData = {...validUserData};
+      delete badUserData[key];
+      await request(app)
+        .post(`/user`)
+        .send(badUserData)
+        .expect(HttpCode.BAD_REQUEST);
+    }
   });
 
-  test(`Количество публикаций изменено`, async () => {
+  test(`Когда тип поля невалидный возвращает 400`, async () => {
+    const badUsers = [
+      {...validUserData, firstName: true},
+      {...validUserData, email: 1},
+    ];
+    for (const badUserData of badUsers) {
+      await request(app)
+        .post(`/user`)
+        .send(badUserData)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+
+  test(`Когда значение поля невалидное возвращает 400`, async () => {
+    const badUsers = [
+      {...validUserData, password: `short`, passwordRepeated: `short`},
+      {...validUserData, email: `invalid`},
+    ];
+    for (const badUserData of badUsers) {
+      await request(app)
+        .post(`/user`)
+        .send(badUserData)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+
+  test(`Когда пароль и повтор пароля не одинаковые возвращает 400`, async () => {
+    const badUserData = {...validUserData, passwordRepeated: `not sidorov`};
     await request(app)
-      .get(`/articles`)
-      .expect((res) => expect(res.body.length).toBe(6));
-  });
-});
-
-describe(`API возвращает список публикаций`, () => {
-  let response;
-
-  beforeAll(async () => {
-    const app = await createAPI();
-    response = await request(app).get(`/articles`);
+      .post(`/user`)
+      .send(badUserData)
+      .expect(HttpCode.BAD_REQUEST);
   });
 
-  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Возвращает список из 5 публикаций`, () =>
-    expect(response.body.length).toBe(5));
-
-  test(`title первой публикации "Как достигнуть успеха не вставая с кресла"`, () => {
-    expect(response.body.sort((a, b)=> Number(a.id) - Number(b.id))[0].title).toBe(
-        `Как достигнуть успеха не вставая с кресла`
-    );
+  test(`Когда email уже занят возвращает 400`, async () => {
+    const badUserData = {...validUserData, email: `ivanov@example.com`};
+    await request(app)
+      .post(`/user`)
+      .send(badUserData)
+      .expect(HttpCode.BAD_REQUEST);
   });
-
-});
-
-describe(`API возвращает публикацию по id`, () => {
-
-  let response;
-
-  beforeAll(async () => {
-    const app = await createAPI();
-    response = await request(app).get(`/articles/1`);
-  });
-
-  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Заголовок публикации "Как собрать камни бесконечности"`, () =>
-    expect(response.body.title).toBe(
-        `Как достигнуть успеха не вставая с кресла`
-    ));
-});
-
-describe(`API не позволяет создать публикацию с не валидными данными`, () => {
-  const newArticle = {
-    title: `Учим HTML и CSS`,
-    categories: [1, 3],
-    fullText: `Просто действуйте. Маленькими шагами. Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин, гармоническая пропорция.`,
-    announce: `Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами.`,
-  };
-
-
-  test(`Если не передано какое-либо обязательное поле возвращает 400`, async () => {
-    const app = await createAPI();
-    for (const key of Object.keys(newArticle)) {
-      const badArticle = {...newArticle};
-      delete badArticle[key];
-      await request(app)
-        .post(`/articles`)
-        .send(badArticle)
-        .expect(HttpCode.BAD_REQUEST);
-    }
-  });
-  test(`Когда данные публикации не соответствуют типу ожидаемых то возвращается 400`, async () => {
-    const app = await createAPI();
-    const badArticles = [
-      {...newArticle, title: 123},
-      {...newArticle, announce: 12345},
-      {...newArticle, fullText: 12345},
-      {...newArticle, categories: `звёдные войны`},
-    ];
-    for (const badArticle of badArticles) {
-      await request(app)
-        .post(`/articles`)
-        .send(badArticle)
-        .expect(HttpCode.BAD_REQUEST);
-    }
-  });
-  test(`Когда в поле публикации передаются невалидные данные возвращается 400`, async () => {
-    const app = await createAPI();
-    const badArticles = [
-      {...newArticle, fullText: ``},
-      {...newArticle, announce: `too short`},
-      {...newArticle, title: `too short`},
-      {...newArticle, categories: []},
-    ];
-    for (const badArticle of badArticles) {
-      await request(app)
-          .post(`/articles`)
-          .send(badArticle)
-          .expect(HttpCode.BAD_REQUEST);
-    }
-  });
-});
-
-describe(`API изменяет существующую публикацию`, () => {
-  const newArticle = {
-    userId: 1,
-    title: `Как собрать камни бесконечности без регистрации и смс`,
-    announce: `Это один из лучших рок-музыкантов. Простые ежедневные упражнения помогут достичь успеха. Программировать не настолько сложно, как об этом говорят. Золотое сечение — соотношение двух величин, гармоническая пропорция.`,
-    fullText: `Просто действуйте. Маленькими шагами. Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин, гармоническая пропорция.`,
-    categories: [
-      1, 3, 5
-    ],
-  };
-
-  let response; let app;
-
-  beforeAll(async () => {
-    app = await createAPI();
-    response = await request(app).put(`/articles/5`).send(newArticle);
-  });
-
-  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Публикация была изменена`, () =>
-    request(app)
-      .get(`/articles/5`)
-      .expect((res) =>
-        expect(res.body.title).toBe(
-            `Как собрать камни бесконечности без регистрации и смс`
-        )
-      ));
-});
-
-test(`API возвращает код ответа 404 во время попытки изменить не существующую публикацию`, async () => {
-  const app = await createAPI();
-
-  const validArticle = {
-    userId: 1,
-    title: `Что такое золотое сечение и прочее`,
-    fullText: `Просто действуйте. Маленькими шагами. Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин, гармоническая пропорция.`,
-    announce: `Собрать камни бесконечности легко, если вы прирожденный герой. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Программировать не настолько сложно, как об этом говорят. Рок-музыка всегда ассоциировалась с протестами.`,
-    categories: [1, 3, 5],
-  };
-
-  return request(app)
-    .put(`/articles/1337`)
-    .send(validArticle)
-    .expect(HttpCode.NOT_FOUND);
-});
-
-test(`API возвращает код ответа 400 во время попытки изменить публикацию не валидными данными`, async () => {
-  const app = await createAPI();
-
-  const invalidArticle = {
-    title: `Что такое золотое сечение`,
-  };
-
-  return request(app)
-    .put(`/articles/gFNhOS`)
-    .send(invalidArticle)
-    .expect(HttpCode.BAD_REQUEST);
-});
-
-describe(`API корректно удаляет публикацию по id`, () => {
-  let response; let app;
-
-  beforeAll(async () => {
-    app = await createAPI();
-    response = await request(app).delete(`/articles/5`);
-  });
-
-  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Количество публикаций стало 4`, () =>
-    request(app)
-      .get(`/articles`)
-      .expect((res) => expect(res.body.length).toBe(4)));
-});
-
-test(`API возвращает 404 на попытку удалить не существующую публикацию`, async () => {
-  const app = await createAPI();
-
-  return request(app).delete(`/articles/20`).expect(HttpCode.NOT_FOUND);
-});
-
-test(`API возвращает 404 на попытку создать новый комментарий к не существующей публикации`, async () => {
-  const app = await createAPI();
-
-  return request(app)
-    .post(`/articles/1337/comments`)
-    .send({
-      text: `Неважно`,
-      userId: 1
-    })
-    .expect(HttpCode.NOT_FOUND);
-});
-
-test(`API не позволяет удалить комментарий к не существующей публикации`, async () => {
-  const app = await createAPI();
-
-  return request(app)
-    .delete(`/articles/1337/comments/1`)
-    .expect(HttpCode.NOT_FOUND);
-});
-
-test(`API не позволяет удалить не существующий комментарий`, async () => {
-  const app = await createAPI();
-
-  return request(app)
-    .delete(`/articles/1/comments/2337`)
-    .expect(HttpCode.NOT_FOUND);
-});
-
-describe(`API возвращает список комментариев к публикации`, () => {
-  let response; let app;
-
-  beforeAll(async () => {
-    app = await createAPI();
-    response = await request(app).get(`/articles/2/comments`);
-  });
-
-  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Возвращает список из 4 комментариев`, () =>
-    expect(response.body.length).toBe(4));
-
-  test(`id первого комментария "Давно не пользуюсь стационарными компьютерами. Ноутбуки победили."`, () =>
-    expect(response.body[0].text).toBe(
-        `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.`
-    ));
-});
-
-describe(`API создаёт комментарий если данные валидны`, () => {
-  const newComment = {
-    userId: 1,
-    text: `Валидному комментарию достаточно этого поля`,
-  };
-  let response; let app;
-
-  beforeAll(async () => {
-    app = await createAPI();
-    response = await request(app)
-      .post(`/articles/1/comments`)
-      .send(newComment);
-  });
-
-  test(`Статус код 201`, () =>
-    expect(response.statusCode).toBe(HttpCode.CREATED));
-
-  test(`Количество комментариев изменено`, () =>
-    request(app)
-      .get(`/articles/1/comments`)
-      .expect((res) => expect(res.body.length).toBe(2)));
-});
-
-test(`API возвращает код статуса 400 при попытке создать не валидный комментарий`, async () => {
-  const app = await createAPI();
-
-  return request(app)
-    .post(`/articles/1/comments`)
-    .send({})
-    .expect(HttpCode.BAD_REQUEST);
-});
-
-describe(`API корректно удаляет комментарий`, () => {
-  let response; let app;
-
-  beforeAll(async () => {
-    app = await createAPI();
-    response = await request(app).delete(`/articles/1/comments/1`);
-  });
-
-  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Количество комментариев стало 0`, () =>
-    request(app)
-      .get(`/articles/1/comments`)
-      .expect((res) => expect(res.body.length).toBe(0)));
 });

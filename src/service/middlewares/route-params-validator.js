@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
 
   return schemaValidator({
     res,
-    next,
+    cb: next,
     schema,
     data: params,
     abortEarly: false,

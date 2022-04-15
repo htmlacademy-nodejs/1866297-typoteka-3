@@ -15,10 +15,12 @@ class API {
       timeout,
     });
   }
+
   async _load(url, options) {
     const response = await this._http.request({url, ...options});
     return response.data;
   }
+
   async getArticles({offset, limit, comments}) {
     return this._load(`/articles`, {params: {comments, offset, limit}});
   }
@@ -50,6 +52,7 @@ class API {
       data,
     });
   }
+
   editArticle(id, data) {
     return this._load(`/articles/${id}`, {
       method: HttpMethod.PUT,
@@ -59,6 +62,13 @@ class API {
 
   createComment(id, data) {
     return this._load(`/articles/${id}/comments`, {
+      method: HttpMethod.POST,
+      data,
+    });
+  }
+
+  createUser(data) {
+    return this._load(`/user`, {
       method: HttpMethod.POST,
       data,
     });

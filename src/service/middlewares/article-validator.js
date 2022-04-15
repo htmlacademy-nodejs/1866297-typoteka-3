@@ -12,16 +12,23 @@ const ErrorArticleMessage = {
   FULL_TEXT_MIN: `Текст публикации не может быть пустым`,
   FULL_TEXT_MAX: `Текст публикации не может содержать более 1000 символов`,
   PHOTO: `Тип изображения не поддерживается`,
+  USER_ID: `Некорректный идентификатор пользователя`
 };
 
 const imageRegexp = /.*\.(jpeg|jpg|png)$/;
 
 const schema = Joi.object({
-  categories: Joi.array().items(
-      Joi.number().integer().positive().messages({
-        'number.base': ErrorArticleMessage.CATEGORIES
-      })
-  ).min(1).required(),
+  userId: Joi.number().integer().positive().required().messages({
+    "number.base": ErrorArticleMessage.USER_ID,
+  }),
+  categories: Joi.array()
+    .items(
+        Joi.number().integer().positive().messages({
+          "number.base": ErrorArticleMessage.CATEGORIES,
+        })
+    )
+    .min(1)
+    .required(),
   title: Joi.string().min(30).max(250).required().messages({
     "string.empty": ErrorArticleMessage.TITLE_MIN,
     "string.min": ErrorArticleMessage.TITLE_MIN,
@@ -49,5 +56,5 @@ const schema = Joi.object({
 module.exports = (req, res, next) => {
   const newArticle = req.body;
 
-  return schemaValidator({res, next, schema, data: newArticle, abortEarly: false});
+  return schemaValidator({res, cb: next, schema, data: newArticle, abortEarly: false});
 };

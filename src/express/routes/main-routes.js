@@ -3,6 +3,8 @@
 const {Router} = require(`express`);
 const mainRouter = new Router();
 const api = require(`../api`).getAPI();
+const upload = require(`../middlewares/upload`);
+const {prepareErrors} = require(`../../utils`);
 
 const OFFERS_PER_PAGE = 8;
 
@@ -27,7 +29,26 @@ mainRouter.get(`/`, async (req, res) => {
   res.render(`main`, {articles, page, totalPages, categories: notEmptyCategories});
 });
 
-mainRouter.get(`/register`, (req, res)=> res.render(`sign-up`));
+mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
+mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
+  const {body, file} = req;
+  const userData = {
+    avatar: file ? file.filename : ``,
+    firstName: body[`user-first-name`],
+    lastName: body[`user-last-name`],
+    email: body[`user-email`],
+    password: body[`user-password`],
+    passwordRepeated: body[`user-password-again`],
+  };
+
+  try {
+    await api.createUser(userData);
+    res.redirect(`/login`);
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    res.render(`sign-up`, {validationMessages});
+  }
+});
 mainRouter.get(`/login`, (req, res)=> res.render(`login`));
 mainRouter.get(`/search`, async (req, res) => {
   const {query} = req.query;
