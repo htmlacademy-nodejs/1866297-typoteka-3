@@ -2,7 +2,7 @@ extends layout.pug
 
 block content
   .wrapper
-    include ./partials/auth-header.pug
+    include ./partials/header.pug
     main
       section.post
         h1.visually-hidden Пост
@@ -20,31 +20,11 @@ block content
                       | #{category.name}
                       sup #{category.count}
                     button.themes__remove-btn(type='button') Удалить категорию
-            .post__picture
-              img(src='img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
+            if article.photo
+              .post__picture
+                img(src=`/img/${article.photo}` alt='фотография к публикации')
             .post__text
               p #{article.fullText}
-        .post__wrapper.post__wrapper--comments
-          section.post__comments.comments
-            h2.comments__title.title.title--middle Комментарии
-            ul.comments__list
-              each comment of article.comments
-                li.comments__comment
-                  .comments__avatar.avatar
-                    img(src='img/avatar-1.png' alt='аватар пользователя')
-                  .comments__text
-                    .comments__head
-                      p Евгений Петров •
-                      +formatDate(comment.createdAt,'comments__date')
-                    p.comments__message #{comment.text}
-            .comments__footer.comments__footer--user
-              form(action=`${id}/comments` method='POST' enctype="application/x-www-form-urlencoded")
-                .comments__avatar.avatar
-                  img(src='img/avatar-2.png' alt='аватар пользователя')
-                label
-                  textarea(rows='1' name='comment' placeholder='Присоединиться к обсуждению')
-                button.comments__button.button.button--colored(type='submit') Опубликовать
-              if(validationMessages)
-                p.comments__error #{validationMessages}
+        include ./partials/comments-block.pug
 
 

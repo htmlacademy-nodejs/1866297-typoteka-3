@@ -2,19 +2,22 @@ extends layout.pug
 
 block content
   .wrapper
-    include ./partials/navigation-header.pug
+    include ./partials/header.pug
     main
       section.search-page
-        .search-page__wrapper
+        .search-page__wrapper(class=(results.length === 0 ? "search-page__wrapper--empty" : ""))
           h1 Поиск
           .search.search-page__form
             form(action='/search' method='get' autocomplete="off")
               label
                 input(type='text' name='query' placeholder='Что ищем?' value=query)
               button.search__button.button.button--transparent(type='submit') Найти
-          each result in results
-            .search__result
-              +formatDate(result.createdAt, "search__date", result.createdAt)
-              a.search__link #{result.title}
+          if results.length > 0
+            each result in results
+              .search__result
+                +formatDate(result.createdAt, "search__date", result.createdAt)
+                a(href=`/articles/${result.id}`).search__link #{result.title}
+          else
+            p.search-page__empty Ничего не нашлось
 
 

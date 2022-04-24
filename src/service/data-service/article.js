@@ -45,7 +45,7 @@ class ArticleService {
         model: this._User,
         as: Aliase.USERS,
         attributes: {
-          exclude: [`passwordHash`],
+          exclude: [`password`],
         },
       },
     ];
@@ -59,7 +59,7 @@ class ArticleService {
             model: this._User,
             as: Aliase.USERS,
             attributes: {
-              exclude: [`passwordHash`],
+              exclude: [`password`, `email`],
             },
           },
         ],

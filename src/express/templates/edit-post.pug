@@ -2,12 +2,13 @@ extends layout.pug
 
 block content
   .wrapper
-    include ./partials/navigation-header.pug
+    include ./partials/header.pug
     main
       section
         .popup.popup--new-publication.popup--anti
           .new-publication
             form(action=`${id != null ? `/edit/${id}` : '/articles/add'}` method='POST' enctype="multipart/form-data")
+              input(type="hidden" name="_csrf" value=csrfToken)
               .new-publication__header
                 h1 Новая публикация
                 .new-publication__date-form

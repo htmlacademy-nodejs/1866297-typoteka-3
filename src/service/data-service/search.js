@@ -22,7 +22,7 @@ class SearchService {
           model: this._User,
           as: Aliase.USERS,
           attributes: {
-            exclude: [`passwordHash`]
+            exclude: [`password`]
           }
         }],
       order: [[`createdAt`, `DESC`]],

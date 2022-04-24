@@ -7,6 +7,7 @@ const initDB = require(`../lib/init-db`);
 const user = require(`./user`);
 const UserService = require(`../data-service/user`);
 const {HttpCode} = require(`../../constants`);
+const passwordUtils = require(`../lib/password`);
 
 const mockArticles = [
   {
@@ -127,21 +128,21 @@ const mockArticles = [
 const mockUsers = [
   {
     email: `ivanov@example.com`,
-    password: `ivanov`,
+    password: passwordUtils.hashSync(`ivanov`),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar1.jpg`,
   },
   {
     email: `petrov@example.com`,
-    password: `petrov`,
+    password: passwordUtils.hashSync(`petrov`),
     firstName: `Пётр`,
     lastName: `Петров`,
     avatar: `avatar2.jpg`,
   },
   {
     email: `sidorov@example.com`,
-    password: `sidorov`,
+    password: passwordUtils.hashSync(`sidorov`),
     firstName: `Артём`,
     lastName: `Сидоров`,
     avatar: `avatar3.jpg`,
@@ -160,7 +161,7 @@ const mockCategories = [
 ];
 
 const createAPI = async () => {
-  const mockDB = new Sequelize(`sqlite::memory:`, {logging: true});
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   const app = express();
   app.use(express.json());
   await initDB(mockDB, {
@@ -267,5 +268,53 @@ describe(`API не позволяет создать пользователя е
       .post(`/user`)
       .send(badUserData)
       .expect(HttpCode.BAD_REQUEST);
+  });
+});
+
+describe(`API аутентифицирует юзера если данные валидны`, () => {
+  const validAuthData = {
+    email: `ivanov@example.com`,
+    password: `ivanov`,
+  };
+
+  let response;
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(validAuthData);
+  });
+  test(`Статус код 200`, () =>
+    expect(response.statusCode).toBe(HttpCode.OK));
+
+  test(`user firstName Иван`, () => expect(response.body.firstName).toBe(`Иван`));
+});
+
+describe(`API не аутентифицирует если данные не валидны`, () => {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
+
+  test(`Если некорректный email возвращает 401 статус`, async () => {
+    const badAuthData = {
+      email: `not-exist@example.com`,
+      password: `petrov`,
+    };
+    await request(app)
+      .post(`/user/auth`)
+      .send(badAuthData)
+      .expect(HttpCode.UNAUTHORIZED);
+  });
+
+  test(`Если пароли не совпадают возвращает 401 статус`, async () => {
+    const badAuthData = {
+      email: `petrov@example.com`,
+      password: `ivanov`,
+    };
+    await request(app)
+      .post(`/user/auth`)
+      .send(badAuthData)
+      .expect(HttpCode.UNAUTHORIZED);
   });
 });

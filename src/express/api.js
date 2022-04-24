@@ -46,6 +46,10 @@ class API {
     return await this._load(`/category`, {params: {count}});
   }
 
+  async getCategories(count) {
+    return await this._load(`/category`, {params: {count}});
+  }
+
   async createArticle(data) {
     return await this._load(`/articles`, {
       method: HttpMethod.POST,
@@ -71,6 +75,13 @@ class API {
     return this._load(`/user`, {
       method: HttpMethod.POST,
       data,
+    });
+  }
+
+  auth(email, password) {
+    return this._load(`/user/auth`, {
+      method: HttpMethod.POST,
+      data: {email, password},
     });
   }
 }

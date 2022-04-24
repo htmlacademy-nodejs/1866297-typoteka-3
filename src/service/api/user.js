@@ -9,6 +9,11 @@ const passwordUtils = require(`../lib/password`);
 
 const route = new Router();
 
+const ErrorAuthMessage = {
+  EMAIL: `Электронный адрес не существует`,
+  PASSWORD: `Неверный пароль`,
+};
+
 module.exports = (app, service) => {
   app.use(`/user`, route);
 
@@ -22,5 +27,23 @@ module.exports = (app, service) => {
     delete result.passwordHash;
 
     res.status(HttpCode.CREATED).json(result);
+  });
+
+  route.post(`/auth`, async (req, res) => {
+    const {email, password} = req.body;
+    const user = await service.findByEmail(email);
+
+    if (!user) {
+      res.status(HttpCode.UNAUTHORIZED).send(ErrorAuthMessage.EMAIL);
+      return;
+    }
+    const passwordIsCorrect = await passwordUtils.compare(password, user.password);
+
+    if (passwordIsCorrect) {
+      delete user.password;
+      res.status(HttpCode.OK).json(user);
+    } else {
+      res.status(HttpCode.UNAUTHORIZED).send(ErrorAuthMessage.PASSWORD);
+    }
   });
 };

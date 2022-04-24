@@ -9,6 +9,7 @@ const {prepareErrors} = require(`../../utils`);
 const OFFERS_PER_PAGE = 8;
 
 mainRouter.get(`/`, async (req, res) => {
+  const {user} = req.session;
   let {page = 1} = req.query;
   page = +page;
 
@@ -26,7 +27,7 @@ mainRouter.get(`/`, async (req, res) => {
   const notEmptyCategories = categories.filter(
       (category) => Number(category.count) > 0
   );
-  res.render(`main`, {articles, page, totalPages, categories: notEmptyCategories});
+  res.render(`main`, {articles, page, totalPages, categories: notEmptyCategories, user});
 });
 
 mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
@@ -51,23 +52,48 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
 });
 mainRouter.get(`/login`, (req, res)=> res.render(`login`));
 mainRouter.get(`/search`, async (req, res) => {
+  const {user} = req.session;
   const {query} = req.query;
   if (!query) {
-    return res.render(`search`);
+    return res.render(`search`, {user});
   }
   try {
     const results = await api.search(query);
     return res.render(`search-result`, {
+      user,
       results,
       query,
     });
   } catch (error) {
-    return res.render(`search-empty`, {
+    return res.render(`search-result`, {
+      user,
       results: [],
       query,
     });
   }
 });
-mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
+
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(
+        req.body[`email`],
+        req.body[`password`]
+    );
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    res.render(`login`, {validationMessages});
+  }
+});
+
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  req.session.save(() => {
+    res.redirect(`/login`);
+  });
+});
 
 module.exports = mainRouter;

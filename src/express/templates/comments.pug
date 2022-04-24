@@ -2,7 +2,7 @@ extends layout.pug
 
 block content
   .wrapper.wrapper--nobackground
-    include ./partials/navigation-header.pug
+    include ./partials/header.pug
     main.main-page.main-page--padding
       section.main-page__publication.publication
         h1.publication__title Комментарии
@@ -11,11 +11,12 @@ block content
             each comment in article.comments
               li.publication__list-item
                 .publication__header
-                  img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
-                  b.publication__list-name Александр Петров
+                  img.publication__list-image(src=`/img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
+                  b.publication__list-name #{comment.users.firstName + " " + comment.users.lastName}
                   +formatDate(article.createdAt,'publication__item-time')
-                a.publication__item-text(href='#') #{comment.text}
-                p.publication__text-strong #{article.title}
+                a.publication__item-text #{comment.text}
+                p.publication__text-strong
+                  a(href=`/articles/${article.id}`) #{article.title}
                 button.publication__button.button.button--close-item(type='button')
                   span.visually-hidden Закрыть строку списка
 
