@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 const myRouter = new Router();
 const api = require(`../api`).getAPI();
 const auth = require(`../middlewares/auth`);
-const isAdmin = require(`../middlewares/isAdmin`);
+const isAdmin = require(`../middlewares/is-admin`);
 
 myRouter.get(`/`, auth, isAdmin, async (req, res) => {
   const {user} = req.session;

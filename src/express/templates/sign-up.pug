@@ -13,13 +13,13 @@ block content
             form(action='/register' method='POST' enctype="multipart/form-data")
               .form__field
                 label
-                  input(type='email' name='user-email' placeholder='Электронная почта' required)
+                  input(type='email' name='user-email' placeholder='Электронная почта' required value=email)
               .form__field
                 label
-                  input(type='text' name='user-first-name' placeholder='Имя' required)
+                  input(type='text' name='user-first-name' placeholder='Имя' required value=firstName)
               .form__field
                 label
-                  input(type='text' name='user-last-name' placeholder='Фамилия' required)
+                  input(type='text' name='user-last-name' placeholder='Фамилия' required value=lastName)
               .form__field
                 label
                   input(type='password' name='user-password' placeholder='Пароль' required)

@@ -5,6 +5,8 @@ const mainRouter = new Router();
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 const {prepareErrors} = require(`../../utils`);
+const csrf = require(`csurf`);
+const csrfProtection = csrf();
 
 const OFFERS_PER_PAGE = 8;
 
@@ -47,10 +49,17 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     res.redirect(`/login`);
   } catch (errors) {
     const validationMessages = prepareErrors(errors);
-    res.render(`sign-up`, {validationMessages});
+    res.render(`sign-up`, {
+      validationMessages,
+      firstName: body[`user-first-name`],
+      lastName: body[`user-last-name`],
+      email: body[`user-email`],
+    });
   }
 });
-mainRouter.get(`/login`, (req, res)=> res.render(`login`));
+mainRouter.get(`/login`, csrfProtection, (req, res) =>
+  res.render(`login`, {csrfToken: req.csrfToken()})
+);
 mainRouter.get(`/search`, async (req, res) => {
   const {user} = req.session;
   const {query} = req.query;
@@ -73,7 +82,7 @@ mainRouter.get(`/search`, async (req, res) => {
   }
 });
 
-mainRouter.post(`/login`, async (req, res) => {
+mainRouter.post(`/login`, csrfProtection, async (req, res) => {
   try {
     const user = await api.auth(
         req.body[`email`],
@@ -85,13 +94,16 @@ mainRouter.post(`/login`, async (req, res) => {
     });
   } catch (errors) {
     const validationMessages = prepareErrors(errors);
-    res.render(`login`, {validationMessages});
+    res.render(`login`, {
+      email: req.body[`email`],
+      validationMessages,
+      csrfToken: req.csrfToken(),
+    });
   }
 });
 
 mainRouter.get(`/logout`, (req, res) => {
-  delete req.session.user;
-  req.session.save(() => {
+  req.session.destroy(() => {
     res.redirect(`/login`);
   });
 });

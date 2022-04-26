@@ -11,9 +11,10 @@ block content
           h2.popup__title Войти
           .popup__form.form.form--log-in
             form(action='/login' method='post')
+              input(type="hidden" name="_csrf" value=csrfToken)
               .form__field
                 label
-                  input(type='email' name='email' placeholder='Электронная почта' required)
+                  input(type='email' name='email' placeholder='Электронная почта' required value=email)
               .form__field
                 label
                   input(type='password' name='password' placeholder='Пароль' required)
