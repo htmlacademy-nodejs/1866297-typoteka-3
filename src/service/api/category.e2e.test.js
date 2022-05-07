@@ -7,6 +7,7 @@ const initDB = require(`../lib/init-db`);
 const category = require(`./category`);
 const DataService = require(`../data-service/category`);
 const {HttpCode} = require(`../../constants`);
+const passwordUtils = require(`../lib/password`);
 
 const mockArticles = [
   {
@@ -127,21 +128,21 @@ const mockArticles = [
 const mockUsers = [
   {
     email: `ivanov@example.com`,
-    password: `ivanov`,
+    password: passwordUtils.hashSync(`ivanov`),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar1.jpg`,
   },
   {
     email: `petrov@example.com`,
-    password: `petrov`,
+    password: passwordUtils.hashSync(`petrov`),
     firstName: `Пётр`,
     lastName: `Петров`,
     avatar: `avatar2.jpg`,
   },
   {
     email: `sidorov@example.com`,
-    password: `sidorov`,
+    password: passwordUtils.hashSync(`sidorov`),
     firstName: `Артём`,
     lastName: `Сидоров`,
     avatar: `avatar3.jpg`,
@@ -159,24 +160,25 @@ const mockCategories = [
   `За жизнь`,
 ];
 
-const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-
-const app = express();
-app.use(express.json());
-
-beforeAll(async () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+  const app = express();
+  app.use(express.json());
   await initDB(mockDB, {
     categories: mockCategories,
     articles: mockArticles,
     users: mockUsers,
   });
   category(app, new DataService(mockDB));
-});
+  return app;
+};
 
 describe(`API возвращает список категорий`, () => {
   let response;
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).get(`/category`);
   });
 
@@ -198,3 +200,149 @@ describe(`API возвращает список категорий`, () => {
         expect.arrayContaining(mockCategories)
     ));
 });
+
+describe(`Создание категории`, () => {
+
+  describe(`API создает категорию`, () => {
+    let response;
+    let app;
+    const validCategory = {
+      name: `Новая категория`,
+    };
+
+    beforeAll(async () => {
+      app = await createAPI();
+      response = await request(app).post(`/category`).send(validCategory);
+    });
+
+    test(`Статус код 200`, () => {
+      expect(response.statusCode).toBe(HttpCode.OK);
+    });
+
+    test(`Возвращает созданную категорию`, () =>
+      expect(response.body.name).toBe(validCategory.name));
+  });
+
+  test(`API возвращает 400 если данные для создания категории не валидны`, async () => {
+    const app = await createAPI();
+
+    const invalidCategories = [
+      {name: `коты`},
+      {name: `   коты   `},
+      {name: `Название категории содержит больше 30 символов`},
+    ];
+
+    for (const invalidCategory of invalidCategories) {
+      await request(app)
+        .post(`/category`)
+        .send(invalidCategory)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+});
+
+
+describe(`Изменение категории`, () => {
+
+  describe(`API изменяет категорию`, () => {
+    let response;
+    let app;
+    const validCategory = {
+      name: `Изменённая категория`,
+    };
+
+    beforeAll(async () => {
+      app = await createAPI();
+      response = await request(app).put(`/category/1`).send(validCategory);
+      console.log(response.body);
+    });
+
+    test(`Статус код 200`, () => {
+      expect(response.statusCode).toBe(HttpCode.OK);
+    });
+
+    test(`Возвращает подтверждение изменения категории`, () =>
+      expect(response.body).toBeTruthy());
+  });
+
+  test(`API возвращает 200 если данные для изменения валидны`, async () => {
+    const app = await createAPI();
+
+    const validCategories = [{name: `попугаи`}, {name: `   собаки   `}];
+
+    for (const validCategory of validCategories) {
+      await request(app)
+        .put(`/category/1`)
+        .send(validCategory)
+        .expect(HttpCode.OK);
+    }
+  });
+
+  test(`API возвращает 400 если данные для изменения категории не валидны`, async () => {
+    const app = await createAPI();
+
+    const invalidCategories = [
+      {name: `коты`},
+      {name: `   коты   `},
+      {name: `Название категории содержит больше 30 символов`},
+    ];
+
+    for (const invalidCategory of invalidCategories) {
+      await request(app)
+        .put(`/category/1`)
+        .send(invalidCategory)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+
+  test(`API возвращает 404 если категории не существует`, async () => {
+    const app = await createAPI();
+
+    const validCategory = {
+      name: `Валидное название`,
+    };
+
+    return request(app)
+      .put(`/category/1337`)
+      .send(validCategory)
+      .expect(HttpCode.NOT_FOUND);
+  });
+});
+
+describe(`Удаление категории`, () => {
+  let app;
+  let response;
+  const validCategory = {
+    name: `Новая категория`,
+  };
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/category`).send(validCategory);
+  });
+
+  test(`Удаление категории возвращает 200`, () => {
+    return request(app)
+      .delete(`/category/${response.body.id}`)
+      .expect(HttpCode.OK);
+  });
+});
+
+
+test(`API возвращает 404 если категории не существует`, async () => {
+  const app = await createAPI();
+
+  return request(app)
+    .delete(`/category/1337`)
+    .expect(HttpCode.NOT_FOUND);
+});
+
+test(`API возвращает 400 если есть публикации с данной категорией`, async () => {
+  const app = await createAPI();
+
+  return request(app)
+    .delete(`/category/1`)
+    .expect(HttpCode.BAD_REQUEST);
+});
+
+

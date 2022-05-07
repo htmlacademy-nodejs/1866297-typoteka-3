@@ -9,6 +9,50 @@ class CategoryService {
     this._ArticleCategory = sequelize.models.ArticleCategory;
   }
 
+  async create(categoryData) {
+    const category = await this._Category.create(categoryData);
+    return category.get();
+  }
+
+  async update(id, data) {
+    const [affectedRows] = await this._Category.update(data, {
+      where: {id},
+    });
+    return !!affectedRows;
+  }
+
+  async drop(id) {
+    const deletedRows = await this._Category.destroy({
+      where: {id},
+    });
+    return !!deletedRows;
+  }
+
+  async findOne(id) {
+    return await this._Category.findByPk(id);
+  }
+
+  async findAllInArticles(id) {
+    return await this._Category.findAll({
+      raw: true,
+      attributes: [
+        [
+          Sequelize.fn(`COUNT`, Sequelize.col(`articleCategories.CategoryId`)),
+          `count`,
+        ],
+      ],
+      group: [Sequelize.col(`articleCategories.CategoryId`)],
+      where: {id},
+      include: [
+        {
+          model: this._ArticleCategory,
+          as: Aliase.ARTICLE_CATEGORIES,
+          attributes: [],
+        },
+      ],
+    });
+  }
+
   async findAll(needCount) {
     if (needCount) {
       const result = await this._Category.findAll({

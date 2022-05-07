@@ -1,23 +1,20 @@
 extends layout.pug
 
 block content
-  .wrapper.wrapper--nobackground
-    include ./partials/header.pug
-    main.main-page.main-page--padding
-      section.main-page__publication.publication
-        h1.publication__title Комментарии
-        ul.publication__list
-          each article in articles
-            each comment in article.comments
-              li.publication__list-item
-                .publication__header
-                  img.publication__list-image(src=`/img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
-                  b.publication__list-name #{comment.users.firstName + " " + comment.users.lastName}
-                  +formatDate(article.createdAt,'publication__item-time')
-                a.publication__item-text #{comment.text}
-                p.publication__text-strong
-                  a(href=`/articles/${article.id}`) #{article.title}
-                button.publication__button.button.button--close-item(type='button')
-                  span.visually-hidden Закрыть строку списка
+  main.main-page.main-page--padding
+    section.main-page__publication.publication
+      h1.publication__title Комментарии
+      ul.publication__list
+        each comment in comments
+          li.publication__list-item
+            .publication__header
+              img.publication__list-image(src=`/img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
+              b.publication__list-name #{comment.users.firstName + " " + comment.users.lastName}
+              +formatDate(comment.createdAt,'publication__item-time')
+            a.publication__item-text #{comment.text}
+            p.publication__text-strong
+              a(href=`/articles/${comment.articleId}`) #{comment.title}
+            button.publication__button.button.button--close-item(type='button')
+              span.visually-hidden Удалить комментарий
 
 

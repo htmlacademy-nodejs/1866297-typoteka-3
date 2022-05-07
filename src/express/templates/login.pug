@@ -1,25 +1,23 @@
 extends layout.pug
 
 block content
-  .wrapper
-    include ./partials/header.pug
-    main
-      h1.visually-hidden Регистрация пользователя
-      section
-        .popup.popup--registration.popup--anti
-          a.popup__button.button.button--popup-close(aria-label='Закрыть окно') Закрыть окно
-          h2.popup__title Войти
-          .popup__form.form.form--log-in
-            form(action='/login' method='post')
-              input(type="hidden" name="_csrf" value=csrfToken)
-              .form__field
-                label
-                  input(type='email' name='email' placeholder='Электронная почта' required value=email)
-              .form__field
-                label
-                  input(type='password' name='password' placeholder='Пароль' required)
-              +insertErrorMessage(validationMessages)
-              //- p.form__error-message Некоторая ошибка произошла, беда!
-              button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти
+  main
+    h1.visually-hidden Регистрация пользователя
+    section
+      .popup.popup--registration.popup--anti
+        a.popup__button.button.button--popup-close(aria-label='Закрыть окно') Закрыть окно
+        h2.popup__title Войти
+        .popup__form.form.form--log-in
+          form(action='/login' method='post')
+            input(type="hidden" name="_csrf" value=csrfToken)
+            .form__field
+              label
+                input(type='email' name='email' placeholder='Электронная почта' required value=email)
+            .form__field
+              label
+                input(type='password' name='password' placeholder='Пароль' required)
+            +insertErrorMessage(validationMessages)
+            //- p.form__error-message Некоторая ошибка произошла, беда!
+            button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти
 
 

@@ -4,6 +4,9 @@ const articleValidator = require(`./article-validator.js`);
 const commentValidator = require(`./comment-validator.js`);
 const articleExists = require(`./article-exists.js`);
 const routeParamsValidator = require(`./route-params-validator.js`);
+const categoryValidator = require(`./category-validator.js`);
+const categoryExists = require(`./category-exists.js`);
+const userValidator = require(`./user-validator.js`);
 
 
 module.exports = {
@@ -11,4 +14,7 @@ module.exports = {
   articleExists,
   commentValidator,
   routeParamsValidator,
+  categoryValidator,
+  categoryExists,
+  userValidator,
 };

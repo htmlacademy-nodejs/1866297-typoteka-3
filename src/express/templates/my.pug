@@ -1,17 +1,15 @@
 extends layout.pug
 
 block content
-  .wrapper.wrapper--nobackground
-    include ./partials/header.pug
-    main.main-page.main-page--padding
-      section.main-page__notes.notes
-        h1.notes__title Мои записи
-        ul.notes__list
-          each article in articles
-            li.notes__list-item
-              +formatDate(article.createdAt,'notes__item-time')
-              a.notes__item-text(href=`/articles/${article.id}`) #{article.title}
-              button.notes__button.button.button--close-item(type='button' action=`/articles/${article.id}` method="delete")
-                span.visually-hidden Закрыть строку списка
+  main.main-page.main-page--padding
+    section.main-page__notes.notes
+      h1.notes__title Мои записи
+      ul.notes__list
+        each article in articles
+          li.notes__list-item
+            +formatDate(article.createdAt,'notes__item-time')
+            a.notes__item-text(href=`/articles/${article.id}`) #{article.title}
+            button.notes__button.button.button--close-item(type='button' action=`/articles/${article.id}` method="delete")
+              span.visually-hidden Закрыть строку списка
 
 

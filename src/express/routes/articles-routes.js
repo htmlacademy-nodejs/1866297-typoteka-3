@@ -174,6 +174,7 @@ articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
     id,
     user,
     csrfToken: req.csrfToken(),
+    previousPage: req.get(`referer`),
   });
 });
 

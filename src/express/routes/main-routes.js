@@ -4,6 +4,7 @@ const {Router} = require(`express`);
 const mainRouter = new Router();
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
+const isGuest = require(`../middlewares/is-guest`);
 const {prepareErrors} = require(`../../utils`);
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
@@ -32,7 +33,7 @@ mainRouter.get(`/`, async (req, res) => {
   res.render(`main`, {articles, page, totalPages, categories: notEmptyCategories, user});
 });
 
-mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
+mainRouter.get(`/register`, isGuest, (req, res) => res.render(`sign-up`));
 mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
   const userData = {
@@ -57,7 +58,7 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     });
   }
 });
-mainRouter.get(`/login`, csrfProtection, (req, res) =>
+mainRouter.get(`/login`, isGuest, csrfProtection, (req, res) =>
   res.render(`login`, {csrfToken: req.csrfToken()})
 );
 mainRouter.get(`/search`, async (req, res) => {

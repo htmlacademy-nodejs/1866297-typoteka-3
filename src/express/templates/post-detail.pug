@@ -1,30 +1,28 @@
 extends layout.pug
 
 block content
-  .wrapper
-    include ./partials/header.pug
-    main
-      section.post
-        h1.visually-hidden Пост
-        section.post__content
-          h2.visually-hidden Основное содержание
-          .post__wrapper
-            .post__head
-              a.post__backwards.button.button--backwards(href='/') Назад
-              +formatDate(article.createdAt,'post__date')
-              h2.post__title.title.title--main #{article.title}
-              ul.post__themes.themes
-                each category of categories
-                  li.themes__item
-                    a.themes__item-link(href=`/articles/category/${category.id}`)
-                      | #{category.name}
-                      sup #{category.count}
-                    button.themes__remove-btn(type='button') Удалить категорию
-            if article.photo
-              .post__picture
-                img(src=`/img/${article.photo}` alt='фотография к публикации')
-            .post__text
-              p #{article.fullText}
-        include ./partials/comments-block.pug
+  main
+    section.post
+      h1.visually-hidden Пост
+      section.post__content
+        h2.visually-hidden Основное содержание
+        .post__wrapper
+          .post__head
+            a.post__backwards.button.button--backwards(href=previousPage) Назад
+            +formatDate(article.createdAt,'post__date')
+            h2.post__title.title.title--main #{article.title}
+            ul.post__themes.themes
+              each category of categories
+                li.themes__item
+                  a.themes__item-link(href=`/articles/category/${category.id}`)
+                    | #{category.name}
+                    sup #{category.count}
+                  button.themes__remove-btn(type='button') Удалить категорию
+          if article.photo
+            .post__picture
+              img(src=`/img/${article.photo}` alt='фотография к публикации')
+          .post__text
+            p #{article.fullText}
+      include ./partials/comments-block.pug
 
 

@@ -7,6 +7,7 @@ const initDB = require(`../lib/init-db`);
 const search = require(`./search`);
 const DataService = require(`../data-service/search`);
 const {HttpCode} = require(`../../constants`);
+const passwordUtils = require(`../lib/password`);
 
 const mockArticles = [
   {
@@ -127,21 +128,21 @@ const mockArticles = [
 const mockUsers = [
   {
     email: `ivanov@example.com`,
-    password: `ivanov`,
+    password: passwordUtils.hashSync(`ivanov`),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar1.jpg`,
   },
   {
     email: `petrov@example.com`,
-    password: `petrov`,
+    password: passwordUtils.hashSync(`petrov`),
     firstName: `Пётр`,
     lastName: `Петров`,
     avatar: `avatar2.jpg`,
   },
   {
     email: `sidorov@example.com`,
-    password: `sidorov`,
+    password: passwordUtils.hashSync(`sidorov`),
     firstName: `Артём`,
     lastName: `Сидоров`,
     avatar: `avatar3.jpg`,

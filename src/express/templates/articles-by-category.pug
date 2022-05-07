@@ -1,39 +1,37 @@
 extends layout.pug
 
 block content
-  .wrapper
-    include ./partials/header.pug
-    main.articles-category
-      h1 #{currentCategory.name}
-      section.articles-category__theme-list
-        h2.visually-hidden Список тем
-        ul.themes
-          each category of categories
-            li.themes__item
-              a(class=`themes__item-link ${category.id === currentCategory.id ? 'themes__item-link--active' : ''}` href=`/articles/category/${category.id}`)
-                | #{category.name}
-                sup #{category.count}
-      section.articles-category__list.preview
-        h2.visually-hidden Список превью статей
-        ul.preview__list
-          each article of articles
-            li.preview__item
-              ul.preview__breadcrumbs
-                each category in article.categories
-                  li.preview__breadcrumbs-item
-                    a.preview__breadcrumbs-link(href='#') #{category}
-              .preview__background
-                img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
-              +formatDate(article.createdAt,'preview__time')
-              h3.preview__name
-                a.preview__name-link(href=`/articles/${article.id}`) #{article.title}
-              p.preview__text #{article.announce}
-              a.preview__comment(href='#')
-                | Комментарии
-                span.preview__cloud
-                |
-                b.preview__comment-count #{article.commentsCount}
-      +pagination(page, totalPages, 2, `?`)
+  main.articles-category
+    h1 #{currentCategory.name}
+    section.articles-category__theme-list
+      h2.visually-hidden Список тем
+      ul.themes
+        each category of categories
+          li.themes__item
+            a(class=`themes__item-link ${category.id === currentCategory.id ? 'themes__item-link--active' : ''}` href=`/articles/category/${category.id}`)
+              | #{category.name}
+              sup #{category.count}
+    section.articles-category__list.preview
+      h2.visually-hidden Список превью статей
+      ul.preview__list
+        each article of articles
+          li.preview__item
+            ul.preview__breadcrumbs
+              each category in article.categories
+                li.preview__breadcrumbs-item
+                  a.preview__breadcrumbs-link(href='#') #{category}
+            .preview__background
+              img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
+            +formatDate(article.createdAt,'preview__time')
+            h3.preview__name
+              a.preview__name-link(href=`/articles/${article.id}`) #{article.title}
+            p.preview__text #{article.announce}
+            a.preview__comment(href='#')
+              | Комментарии
+              span.preview__cloud
+              |
+              b.preview__comment-count #{article.commentsCount}
+    +pagination(page, totalPages, 2, `?`)
 
 
 

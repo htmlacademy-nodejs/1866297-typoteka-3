@@ -46,8 +46,24 @@ class API {
     return await this._load(`/category`, {params: {count}});
   }
 
-  async getCategories(count) {
-    return await this._load(`/category`, {params: {count}});
+  async createCategory(data) {
+    return await this._load(`/category`, {
+      method: HttpMethod.POST,
+      data,
+    });
+  }
+
+  async updateCategory({name, id}) {
+    return await this._load(`/category/${id}`, {
+      method: HttpMethod.PUT,
+      data: {name},
+    });
+  }
+
+  async deleteCategory({id}) {
+    return await this._load(`/category/${id}`, {
+      method: HttpMethod.DELETE,
+    });
   }
 
   async createArticle(data) {
@@ -87,7 +103,6 @@ class API {
 }
 
 const defaultAPI = new API(defaultUrl, TIMEOUT);
-
 
 module.exports = {
   API,

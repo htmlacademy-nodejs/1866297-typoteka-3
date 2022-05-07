@@ -27,7 +27,8 @@
           p.comments__error #{validationMessages}
     else
       .comments__footer.comments__footer--visitor
-        button.comments__button.button.button--colored(type='submit') Войти
+        a(href='/login')
+          button.comments__button.button.button--colored(type='submit') Войти
         .comments__registration
           p.text.text--signature
             b.title.title--small Регистрация
