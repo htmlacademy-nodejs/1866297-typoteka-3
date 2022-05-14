@@ -22,6 +22,8 @@ html(lang='ru')
         padding: 10px;
       }
 body
+  mixin formatStringWithEllipsis(text, length)
+    | #{text.length > length ? text.slice(0, length).trim() + '...' : text}
   mixin insertErrorMessage(messages)
     if messages
       each message of messages

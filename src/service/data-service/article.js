@@ -25,11 +25,26 @@ class ArticleService {
   }
 
   async findOne(id, needComments) {
-    const include = [Aliase.CATEGORIES];
+    const extend = {
+      include: [Aliase.CATEGORIES],
+    };
     if (needComments) {
-      include.push(Aliase.COMMENTS);
+      extend.include.push({
+        model: this._Comment,
+        as: Aliase.COMMENTS,
+        include: [
+          {
+            model: this._User,
+            as: Aliase.USERS,
+            attributes: {
+              exclude: [`password`, `email`],
+            },
+          },
+        ],
+      });
+      extend.order = [[this.sequelize.col(`comments.createdAt`), `ASC`]];
     }
-    return this._Article.findByPk(id, {include});
+    return this._Article.findByPk(id, {...extend});
   }
 
   async update(id, article) {

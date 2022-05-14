@@ -10,6 +10,7 @@ const csrf = require(`csurf`);
 const csrfProtection = csrf();
 
 const OFFERS_PER_PAGE = 8;
+const LATEST_COMMENTS_COUNT = 4;
 
 mainRouter.get(`/`, async (req, res) => {
   const {user} = req.session;
@@ -20,17 +21,38 @@ mainRouter.get(`/`, async (req, res) => {
 
   const offset = (page - 1) * OFFERS_PER_PAGE;
 
-  const [{count, articles}, categories] = await Promise.all([
-    api.getArticles({offset, limit, comments: true}),
-    api.getCategories(true),
-  ]);
+  const [{count, articles}, allArticles, latestComments, categories] =
+    await Promise.all([
+      api.getArticles({offset, limit, comments: true}),
+      api.getArticles({comments: true}),
+      api.getComments({
+        order: `DESC`,
+        limit: LATEST_COMMENTS_COUNT,
+        includeUser: true,
+      }),
+      api.getCategories(true),
+    ]);
+
+  const hotArticles = allArticles
+    .map(({id, announce, comments}) => {
+      return {
+        id,
+        announce,
+        commentsLength: comments.length,
+      };
+    })
+    .filter(({commentsLength})=> commentsLength > 0)
+    .sort((art1, art2) => {
+      return art2.commentsLength - art1.commentsLength;
+    })
+    .slice(0, 4);
 
   const totalPages = Math.ceil(count / OFFERS_PER_PAGE);
 
   const notEmptyCategories = categories.filter(
       (category) => Number(category.count) > 0
   );
-  res.render(`main`, {articles, page, totalPages, categories: notEmptyCategories, user});
+  res.render(`main`, {latestComments, hotArticles, articles, page, totalPages, categories: notEmptyCategories, user});
 });
 
 mainRouter.get(`/register`, isGuest, (req, res) => res.render(`sign-up`));

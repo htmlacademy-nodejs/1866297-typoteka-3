@@ -58,7 +58,7 @@ const articlesApi = (app, articleService, commentService) => {
       `/:articleId/comments`,
       [routeParamsValidator, articleExists(articleService)],
       async (req, res) => {
-        const comments = await commentService.findAll(res.locals.article.id);
+        const comments = await commentService.findAll({articleId: res.locals.article.id});
         res.status(HttpCode.OK).json(comments);
       }
   );

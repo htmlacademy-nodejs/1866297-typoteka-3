@@ -87,6 +87,12 @@ class API {
     });
   }
 
+  async getComments({order, limit, includeUser}) {
+    return this._load(`/comments`, {
+      data: {order, limit, includeUser},
+    });
+  }
+
   createUser(data) {
     return this._load(`/user`, {
       method: HttpMethod.POST,

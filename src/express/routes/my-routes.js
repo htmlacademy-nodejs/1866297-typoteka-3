@@ -38,7 +38,6 @@ myRouter.get(`/comments`, auth, isAdmin, async (req, res) => {
 myRouter.get(`/categories`, auth, isAdmin, async (req, res) => {
   const {user} = req.session;
   const categories = await api.getCategories();
-  console.log(categories);
   res.render(`all-categories`, {user, categories});
 });
 

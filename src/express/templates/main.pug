@@ -5,7 +5,7 @@ block content
     h1.visually-hidden Главная страница личного блога Типотека
     p.
 
-      Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
+      Добро пожаловать!
     if articles.length === 0
       .main-page__empty-wrapper
         p.main-page__empty-text Здесь пока пусто!
@@ -23,42 +23,29 @@ block content
           h2.hot__name
             | Самое обсуждаемое
             span.hot__icon.hot__icon--fire
-          ul.hot__list
-            li.hot__list-item
-              a.hot__list-link(href='#')
-                | Билл Гейтс впервые за два года возглавил рейтинг самых богатых людей мира по версии Bloomberg
-                sup.hot__link-sup 12
-            li.hot__list-item
-              a.hot__list-link(href='#')
-                | Сервис для аналитики Telegram-чатов Combot попал под блокировку из-за информации на служебной
-                sup.hot__link-sup 15
-                |  странице
-
-            li.hot__list-item.hot__list-item--margin
-              a.hot__list-link(href='#')
-                | Модель Кайли Дженнер продаст 51% своей компании Kylie Cosmetics владельцу Factor за $600 млн
-                sup.hot__link-sup 52
-            li.hot__list-item.hot__list-item--end
-              a.hot__list-link(href='#')
-                | Tesla получила 146 тысяч предзаказов на электрический пикап Cybertruck за двое суток
-                sup.hot__link-sup 153
+          if hotArticles.length > 0
+            ul.hot__list
+              each article of hotArticles
+                li.hot__list-item
+                  a.hot__list-link(href=`/articles/${article.id}`)
+                    +formatStringWithEllipsis(article.announce, 100)
+                    sup.hot__link-sup #{article.commentsLength}
+          else
+            p.hot__empty Здесь пока ничего нет...
         section.main-page__last.last
           h2.last__name
             | Последние комментарии
             span.last__icon.last__icon--cloud
-          ul.last__list
-            li.last__list-item
-              img.last__list-image(src='img/avatar-small-1.png' width='20' height='20' alt='Аватар пользователя')
-              b.last__list-name Анна Артамонова
-              a.last__list-link(href='#') Сервис аренды жилья Airbnb стал глобальным партнером Международного олимпийского комитета (МОК) на девять лет, в течение которых пройдет пять Олимпиад, в том числе в Токио в 2020 году.
-            li.last__list-item
-              img.last__list-image(src='img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
-              b.last__list-name Александр Петров
-              a.last__list-link(href='#') Главреды «Дождя», Forbes и других СМИ попросили Роскомнадзор разъяснить штрафы за ссылки на сайты с матом
-            li.last__list-item.last__list-item--end
-              img.last__list-image(src='img/avatar-small-3.png' width='20' height='20' alt='Аватар пользователя')
-              b.last__list-name Игорь Шманский
-              a.last__list-link(href='#') Что-то все электрокары в последнее время все на одно лицо делаются))
+          if latestComments.length === 0
+            p.last__empty Здесь пока ничего нет...
+          else
+            ul.last__list
+              each comment of latestComments
+                li.last__list-item
+                  img.last__list-image(src=`/img/${comment.avatar}` width='20' height='20' alt='Аватар пользователя')
+                  b.last__list-name #{comment.firstName + " " + comment.lastName}
+                  a.last__list-link(href=`/articles/${comment.articleId}`)
+                    +formatStringWithEllipsis(comment.text, 100)
       section.main-page__list.preview
         h2.visually-hidden Список превью статей
         ul.preview__list

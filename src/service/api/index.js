@@ -1,9 +1,10 @@
 "use strict";
 const {Router} = require(`express`);
-const category = require(`../api/category`);
-const articles = require(`../api/articles`);
-const search = require(`../api/search`);
-const user = require(`../api/user`);
+const category = require(`./category`);
+const articles = require(`./articles`);
+const search = require(`./search`);
+const user = require(`./user`);
+const comments = require(`./comments`);
 const sequelize = require(`../lib/sequelize`);
 const defineModels = require(`../models`);
 
@@ -25,5 +26,6 @@ module.exports = async () => {
   search(app, new SearchService(sequelize));
   articles(app, new ArticleService(sequelize), new CommentsService(sequelize));
   user(app, new UserService(sequelize));
+  comments(app, new CommentsService(sequelize));
   return app;
 };

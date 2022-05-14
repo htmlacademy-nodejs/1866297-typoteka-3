@@ -254,7 +254,6 @@ describe(`Изменение категории`, () => {
     beforeAll(async () => {
       app = await createAPI();
       response = await request(app).put(`/category/1`).send(validCategory);
-      console.log(response.body);
     });
 
     test(`Статус код 200`, () => {

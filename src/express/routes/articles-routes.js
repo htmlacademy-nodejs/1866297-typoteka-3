@@ -168,6 +168,7 @@ articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
   const {user} = req.session;
   const {id} = req.params;
   const {article, categories} = await getViewArticleData(id);
+  console.log(article.comments);
   res.render(`post-detail`, {
     article,
     categories,
