@@ -5,7 +5,7 @@ block content
     section
       .popup.popup--new-publication.popup--anti
         .new-publication
-          form(action='/articles/add' method='POST' enctype="multipart/form-data")
+          form(action=`/articles/add?_csrf=${csrfToken}` method='POST' enctype="multipart/form-data")
             input(type="hidden" name="_csrf" value=csrfToken)
             .new-publication__header
               h1 Новая публикация
@@ -14,7 +14,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for='new-publication-date' aria-label='Календарь')
-                    input#new-publication-date(type='text' name='createdAt' placeholder='2022-04-30')
+                    input#new-publication-date(type='text' name='createdAt' placeholder=`${(new Date()).toISOString().split('T')[0]}`)
               button.new-publication__button.button.button--colored(type='submit') Опубликовать
             a.popup__button.button.button--popup-close(aria-label='Закрыть окно') Закрыть окно
             .new-publication__form.form
@@ -34,7 +34,7 @@ block content
                     .new-publication__checkbox.new-publication__checkbox--auto
                       input(id=`checkbox-auto-${index + 1}` type='checkbox' name=`categories` value=category.id)
                       label(for=`checkbox-auto-${index + 1}`) #{category.name}
-                  a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
+                  a.new-publication__form-link.button.button--transparent(href='/my/categories') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label

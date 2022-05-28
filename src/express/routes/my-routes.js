@@ -35,6 +35,16 @@ myRouter.get(`/comments`, auth, isAdmin, async (req, res) => {
   res.render(`comments`, {comments: sortedCommentsArray, user});
 });
 
+myRouter.post(`/comments/:commentId`, auth, isAdmin, async (req, res) => {
+  const {action} = req.body;
+  const {commentId} = req.params;
+  console.log(commentId, action, req.params);
+  if (action === `delete`) {
+    await api.deleteComment({id: commentId});
+  }
+  res.redirect(302, `/my/comments`);
+});
+
 myRouter.get(`/categories`, auth, isAdmin, async (req, res) => {
   const {user} = req.session;
   const categories = await api.getCategories();

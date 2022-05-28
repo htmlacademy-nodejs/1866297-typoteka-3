@@ -42,17 +42,25 @@ class ArticleService {
           },
         ],
       });
-      extend.order = [[this.sequelize.col(`comments.createdAt`), `ASC`]];
+      extend.order = [[this.sequelize.col(`comments.createdAt`), `DESC`]];
     }
     return this._Article.findByPk(id, {...extend});
   }
 
   async update(id, article) {
-    const [affectedRows] = await this._Article.update(article, {
+    const [[affectedRows], currentArticle] = await Promise.all([this._Article.update(article, {
       where: {id},
-    });
-    return !!affectedRows;
+    }), this._Article.findByPk(id)]);
+
+    const updated = !!affectedRows;
+
+    if (updated) {
+      await currentArticle.setCategories(article.categories);
+    }
+
+    return updated;
   }
+
   async findAll(needComments) {
     const include = [
       Aliase.CATEGORIES,
@@ -120,6 +128,7 @@ class ArticleService {
 	  GROUP BY "articles".id
 ) AS "Articles"
 	  WHERE "categoriesIds" LIKE '%:id%'
+    ORDER BY "createdAt" DESC
   	  LIMIT :limit
 	  OFFSET :offset;`,
           {

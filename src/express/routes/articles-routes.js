@@ -7,11 +7,11 @@ const auth = require(`../middlewares/auth`);
 const isAdmin = require(`../middlewares/is-admin`);
 const articlesRouter = new Router();
 const api = require(`../api`).getAPI();
-const {HttpCode} = require(`../../constants`);
 const csrf = require(`csurf`);
-const csrfProtection = csrf();
+const csrfProtection = csrf({cookie: false});
 
-const OFFERS_PER_PAGE = 8;
+
+const ARTICLES_PER_PAGE = 8;
 
 const getViewArticleData = async (id) => {
   const [article, categories] = await Promise.all([
@@ -36,9 +36,9 @@ articlesRouter.get(
       let {page = 1} = req.query;
       page = +page;
 
-      const limit = OFFERS_PER_PAGE;
+      const limit = ARTICLES_PER_PAGE;
 
-      const offset = (page - 1) * OFFERS_PER_PAGE;
+      const offset = (page - 1) * ARTICLES_PER_PAGE;
 
       const [categories, {articles, count}] = await Promise.all([
         api.getCategories(true),
@@ -55,12 +55,10 @@ articlesRouter.get(
       )[0];
 
       if (!categoryExists) {
-        return res
-            .status(HttpCode.NOT_FOUND)
-            .send(`Category with ${id} not found`);
+        return res.render(`errors/404`);
       }
 
-      const totalPages = Math.ceil(count / OFFERS_PER_PAGE);
+      const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
 
       return res.render(`articles-by-category`, {
         user,
@@ -92,25 +90,25 @@ articlesRouter.post(
       const {body, file} = req;
 
       const articleData = {
+        userId: user.id,
         photo: file ? file.filename : ``,
         title: body.title,
         announce: body.announce,
         fullText: body[`full-text`],
         categories: ensureArray(body.categories),
       };
-
       try {
         await api.createArticle(articleData);
         res.redirect(302, `/my`);
       } catch (errors) {
         const validationMessages = prepareErrors(errors);
         const categories = await api.getCategories();
-
         res.render(`edit-post`, {
           user,
           categories,
           article: articleData,
           validationMessages,
+          csrfToken: req.csrfToken(),
         });
       }
     }
@@ -122,6 +120,7 @@ articlesRouter.get(`/edit/:id`, auth, isAdmin, csrfProtection, async (req, res) 
     api.getArticle(id),
     api.getCategories(),
   ]);
+
   res.render(`edit-post`, {
     article,
     categories,
@@ -141,6 +140,7 @@ articlesRouter.post(
       const {body, file} = req;
       const {id} = req.params;
       const articleData = {
+        userId: user.id,
         photo: file ? file.filename : ``,
         title: body.title,
         announce: body.announce,
@@ -149,7 +149,7 @@ articlesRouter.post(
       };
 
       try {
-        await api.editOffer(id, articleData);
+        await api.editArticle(id, articleData);
         res.redirect(`/my`);
       } catch (errors) {
         const validationMessages = prepareErrors(errors);
@@ -165,18 +165,22 @@ articlesRouter.post(
     }
 );
 articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
-  const {user} = req.session;
-  const {id} = req.params;
-  const {article, categories} = await getViewArticleData(id);
-  console.log(article.comments);
-  res.render(`post-detail`, {
-    article,
-    categories,
-    id,
-    user,
-    csrfToken: req.csrfToken(),
-    previousPage: req.get(`referer`),
-  });
+  try {
+    const {user} = req.session;
+    const {id} = req.params;
+    const {article, categories} = await getViewArticleData(id);
+
+    res.render(`post-detail`, {
+      article,
+      categories,
+      id,
+      user,
+      csrfToken: req.csrfToken(),
+      previousPage: req.get(`referer`),
+    });
+  } catch (_err) {
+    res.render(`errors/404`);
+  }
 });
 
 articlesRouter.post(

@@ -24,6 +24,10 @@ class CommentsService {
     return !!deletedRows;
   }
 
+  async findOne(id) {
+    return this._Comment.findByPk(id);
+  }
+
   async findAll({articleId, order = `ASC`, limit, includeUser = false}) {
     let extend = {
       attributes: [`Comment.*`]

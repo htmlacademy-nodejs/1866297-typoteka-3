@@ -9,7 +9,8 @@ const {prepareErrors} = require(`../../utils`);
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
 
-const OFFERS_PER_PAGE = 8;
+
+const ARTICLES_PER_PAGE = 8;
 const LATEST_COMMENTS_COUNT = 4;
 
 mainRouter.get(`/`, async (req, res) => {
@@ -17,9 +18,9 @@ mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
   page = +page;
 
-  const limit = OFFERS_PER_PAGE;
+  const limit = ARTICLES_PER_PAGE;
 
-  const offset = (page - 1) * OFFERS_PER_PAGE;
+  const offset = (page - 1) * ARTICLES_PER_PAGE;
 
   const [{count, articles}, allArticles, latestComments, categories] =
     await Promise.all([
@@ -47,7 +48,7 @@ mainRouter.get(`/`, async (req, res) => {
     })
     .slice(0, 4);
 
-  const totalPages = Math.ceil(count / OFFERS_PER_PAGE);
+  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
 
   const notEmptyCategories = categories.filter(
       (category) => Number(category.count) > 0
@@ -80,8 +81,9 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     });
   }
 });
-mainRouter.get(`/login`, isGuest, csrfProtection, (req, res) =>
-  res.render(`login`, {csrfToken: req.csrfToken()})
+mainRouter.get(`/login`, isGuest, csrfProtection, (req, res) => {
+  res.render(`login`, {csrfToken: req.csrfToken()});
+}
 );
 mainRouter.get(`/search`, async (req, res) => {
   const {user} = req.session;
@@ -107,10 +109,7 @@ mainRouter.get(`/search`, async (req, res) => {
 
 mainRouter.post(`/login`, csrfProtection, async (req, res) => {
   try {
-    const user = await api.auth(
-        req.body[`email`],
-        req.body[`password`]
-    );
+    const user = await api.auth(req.body[`email`], req.body[`password`]);
     req.session.user = user;
     req.session.save(() => {
       res.redirect(`/`);

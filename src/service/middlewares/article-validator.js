@@ -46,9 +46,7 @@ const schema = Joi.object({
     .messages({
       "string.pattern.base": ErrorArticleMessage.PHOTO,
     }),
-  fullText: Joi.string().min(1).max(1000).required().messages({
-    "string.empty": ErrorArticleMessage.FULL_TEXT_MIN,
-    "string.min": ErrorArticleMessage.FULL_TEXT_MIN,
+  fullText: Joi.string().optional().allow(null).allow(``).max(1000).messages({
     "string.max": ErrorArticleMessage.FULL_TEXT_MAX,
   }),
 });

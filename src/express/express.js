@@ -2,6 +2,8 @@
 
 const express = require(`express`);
 const path = require(`path`);
+const cookieParser = require(`cookie-parser`);
+const {HttpCode} = require(`./../constants.js`);
 
 const {SESSION_SECRET} = process.env;
 if (!SESSION_SECRET) {
@@ -40,13 +42,23 @@ const mainRouter = require(`./routes/main-routes.js`);
 const articlesRouter = require(`./routes/articles-routes.js`);
 const myRouter = require(`./routes/my-routes.js`);
 
+app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
 app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
-
 app.use(`/`, mainRouter);
 app.use(`/my`, myRouter);
 app.use(`/articles`, articlesRouter);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  next(err);
+});
+
+app.use((req, res) => res.status(HttpCode.BAD_REQUEST).render(`errors/404`));
+
+app.use((err, _req, res, _next) => {
+  res.status(HttpCode.INTERNAL_SERVER_ERROR).render(`errors/500`);
+});
 
 app.set(`views`, path.resolve(__dirname, `templates`));
 app.set(`view engine`, `pug`);

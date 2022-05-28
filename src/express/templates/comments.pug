@@ -14,7 +14,8 @@ block content
             a.publication__item-text #{comment.text}
             p.publication__text-strong
               a(href=`/articles/${comment.articleId}`) #{comment.title}
-            button.publication__button.button.button--close-item(type='button')
-              span.visually-hidden Удалить комментарий
+            form(action=`/my/comments/${comment.id}` method='POST')
+              button.publication__button.button.button--close-item(type='submit' name="action" value="delete")
+                span.visually-hidden Удалить комментарий
 
 

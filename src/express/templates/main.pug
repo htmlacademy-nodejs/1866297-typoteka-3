@@ -50,13 +50,14 @@ block content
         h2.visually-hidden Список превью статей
         ul.preview__list
           each article of articles
-            li.preview__item
+            li(class=`preview__item ${article.photo ? '' : 'preview__item--noimage'}`)
               ul.preview__breadcrumbs
                 each category in article.categories
                   li.preview__breadcrumbs-item
                     a.preview__breadcrumbs-link(href='#') #{category.name}
-              .preview__background
-                img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
+              if article.photo
+                .preview__background
+                  img.preview__background-image(src=`img/${article.photo}` width='460' height='240' alt='Фото в публикации')
               +formatDate(article.createdAt,'preview__time')
               h3.preview__name
                 a.preview__name-link(href=`/articles/${article.id}`) #{article.title}

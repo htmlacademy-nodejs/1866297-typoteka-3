@@ -87,6 +87,12 @@ class API {
     });
   }
 
+  deleteComment({id}) {
+    return this._load(`/comments/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
   async getComments({order, limit, includeUser}) {
     return this._load(`/comments`, {
       data: {order, limit, includeUser},
