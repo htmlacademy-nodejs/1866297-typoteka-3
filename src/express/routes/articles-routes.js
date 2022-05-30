@@ -184,7 +184,7 @@ articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
 });
 
 articlesRouter.post(
-    `/:id/comments`,
+    `/:id`,
     auth,
     csrfProtection,
     async (req, res) => {
@@ -203,6 +203,7 @@ articlesRouter.post(
           categories,
           id,
           validationMessages,
+          csrfToken: req.csrfToken(),
         });
       }
     }

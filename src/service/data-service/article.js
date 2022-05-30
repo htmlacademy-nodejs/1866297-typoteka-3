@@ -119,7 +119,7 @@ class ArticleService {
 	SELECT
 		"articles".*,
 		COUNT(DISTINCT "comments".id) AS "commentsCount",
-		STRING_AGG(DISTINCT "categories".name, ', ') AS "categoriesNames",
+		STRING_AGG(DISTINCT concat("categories".name, '|', "categories".id::varchar), ', ') AS "categoriesData",
 		STRING_AGG(DISTINCT "categories".id::varchar, ',') AS "categoriesIds"
 	  FROM "articles"
       LEFT JOIN "article_categories" ON "article_categories"."ArticleId"="articles".id
@@ -154,7 +154,12 @@ class ArticleService {
     const articles = rawArticles.map((article) => {
       return {
         ...article,
-        categories: article.categoriesNames.split(`, `),
+        categories: article.categoriesData.split(`, `).map((category) => {
+          console.log(category);
+          // eslint-disable-next-line no-shadow
+          const [name, id] = category.split(`|`);
+          return {id, name};
+        }),
       };
     });
     return {

@@ -16,7 +16,7 @@
       h2.comments__title.title.title--middle Комментарии отсутствуют
     if user
       .comments__footer.comments__footer--user
-        form(action=`${id}/comments` method='POST' enctype="application/x-www-form-urlencoded")
+        form(action=`/articles/${id}` method='POST' enctype="application/x-www-form-urlencoded")
           input(type="hidden" name="_csrf" value=csrfToken)
           .comments__avatar.avatar
             img(src=`/img/${user.avatar}` alt='аватар пользователя')

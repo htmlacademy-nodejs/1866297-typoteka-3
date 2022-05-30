@@ -13,6 +13,16 @@ myRouter.get(`/`, auth, isAdmin, async (req, res) => {
   res.render(`my`, {articles, user});
 });
 
+myRouter.post(`/`, auth, isAdmin, async (req, res) => {
+  const {action} = req.body;
+  const {articleId} = req.query;
+
+  if (action === `delete`) {
+    await api.deleteArticle({id: articleId});
+  }
+  res.redirect(302, `/my`);
+});
+
 myRouter.get(`/comments`, auth, isAdmin, async (req, res) => {
   const {user} = req.session;
   const articles = await api.getArticles({comments: true});
@@ -38,7 +48,7 @@ myRouter.get(`/comments`, auth, isAdmin, async (req, res) => {
 myRouter.post(`/comments/:commentId`, auth, isAdmin, async (req, res) => {
   const {action} = req.body;
   const {commentId} = req.params;
-  console.log(commentId, action, req.params);
+
   if (action === `delete`) {
     await api.deleteComment({id: commentId});
   }

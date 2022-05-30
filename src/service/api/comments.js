@@ -23,8 +23,8 @@ const commentsApi = (app, commentService) => {
       [routeParamsValidator, commentExists(commentService)],
       async (req, res) => {
         const {commentId} = req.params;
-        console.log(commentId);
         const comment = await commentService.drop(commentId);
+
         return res.status(HttpCode.OK).json(comment);
       }
   );

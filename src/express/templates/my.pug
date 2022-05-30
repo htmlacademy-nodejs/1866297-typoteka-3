@@ -10,7 +10,8 @@ block content
             +formatDate(article.createdAt,'notes__item-time')
             a.notes__item-text(href=`/articles/${article.id}`) #{article.title}
             a.notes__edit-button(href=`/articles/edit/${article.id}`)
-            button.notes__button.button.button--close-item(type='button' action=`/articles/${article.id}` method="delete")
-              span.visually-hidden Закрыть строку списка
+            form(action=`/my?articleId=${article.id}` method='POST')
+              button.notes__button.button.button--close-item(type='submit' name="action" value="delete")
+                span.visually-hidden Закрыть строку списка
 
 

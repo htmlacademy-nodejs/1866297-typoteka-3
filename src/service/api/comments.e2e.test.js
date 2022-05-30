@@ -184,3 +184,16 @@ describe(`API возвращает список комментариев`, () =>
   test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`Кол-во комментариев 12`, () => expect(response.body.length).toBe(12));
 });
+
+describe(`Удаление комментария`, () => {
+  let response;
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).delete(`/comments/1`);
+  });
+
+  test(`Статус код 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  test(`Комментарий удален`, () => expect(response.body).toBeTruthy());
+});
+
