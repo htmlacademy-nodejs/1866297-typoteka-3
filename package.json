@@ -11,8 +11,8 @@
     "start-back-server": "cross-env NODE_ENV=production node -r dotenv/config ./src/service/service.js --server",
     "start-back-server::debug": "cross-env NODE_ENV=development node -r dotenv/config ./src/service/service.js --server",
     "start-front-server": "nodemon -r dotenv/config ./src/express/express.js",
-    "start-servers": "concurrently \"npm run start-back-server\" \"npm run start-front-server\"",
-    "start-servers::debug": "concurrently \"npm run start-back-server::debug\" \"npm run start-front-server\"",
+    "start-servers": "concurrently --names \"BACKEND,SSR\" \"npm run start-back-server\" \"npm run start-front-server\"",
+    "start-servers::debug": "concurrently --names \"BACKEND,SSR\" \"npm run start-back-server::debug\" \"npm run start-front-server\"",
     "start": "npm run start-servers",
     "start::debug": "npm run start-servers::debug"
   },
@@ -55,6 +55,7 @@
     "pg": "8.7.3",
     "pino": "7.6.1",
     "pug": "3.0.2",
-    "sequelize": "6.17.0"
+    "sequelize": "6.17.0",
+    "socket.io": "4.5.1"
   }
 }

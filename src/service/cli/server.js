@@ -2,6 +2,7 @@
 
 const express = require(`express`);
 const http = require(`http`);
+const socket = require(`../lib/socket`);
 const sequelize = require(`../lib/sequelize`);
 const {API_PREFIX, HttpCode, ExitCode} = require(`../../constants.js`);
 const {getLogger} = require(`../lib/logger.js`);
@@ -47,18 +48,20 @@ module.exports = {
     }
     logger.info(`Connection to database established`);
     const app = await initApp();
+    const server = http.createServer(app);
+
+    const io = socket(server);
+    app.locals.socketio = io;
+
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
-    http
-      .createServer(app)
+    server
       .listen(port)
       .on(`listening`, () => {
         logger.info(`Listening to connections on ${port}`);
       })
       .on(`error`, ({message}) => {
-        logger.error(
-            `An error occurred on server creation: ${message}`
-        );
+        logger.error(`An error occurred on server creation: ${message}`);
         process.exit(ExitCode.error);
       });
   },

@@ -18,6 +18,7 @@ const shuffle = (someArray) => {
 
   return someArray;
 };
+
 const ensureArray = (value) =>
   Array.isArray(value) ? value : [value];
 
@@ -25,9 +26,26 @@ const prepareErrors = (errors) => {
   return errors.response.data.split(`\n`);
 };
 
+const getHotArticles = (allArticles) => {
+  return allArticles
+  .map(({id, announce, comments}) => {
+    return {
+      id,
+      announce,
+      commentsLength: comments.length,
+    };
+  })
+  .filter(({commentsLength}) => commentsLength > 0)
+  .sort((art1, art2) => {
+    return art2.commentsLength - art1.commentsLength;
+  })
+  .slice(0, 4);
+};
+
 module.exports = {
   shuffle,
   getRandomInt,
   ensureArray,
   prepareErrors,
+  getHotArticles,
 };

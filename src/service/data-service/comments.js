@@ -24,7 +24,26 @@ class CommentsService {
     return !!deletedRows;
   }
 
-  async findOne(id) {
+  async findOne(id, userId) {
+    if (userId) {
+      return this._Comment.findOne({
+        raw: true,
+        where: {id},
+        attributes: [
+          `Comment.*`,
+          [this.sequelize.col(`users.firstName`), `firstName`],
+          [this.sequelize.col(`users.lastName`), `lastName`],
+          [this.sequelize.col(`users.avatar`), `avatar`],
+        ],
+        include: [
+          {
+            model: this._User,
+            as: Aliase.USERS,
+            attributes: [],
+          },
+        ],
+      });
+    }
     return this._Comment.findByPk(id);
   }
 

@@ -26,6 +26,6 @@ module.exports = async () => {
   search(app, new SearchService(sequelize));
   articles(app, new ArticleService(sequelize), new CommentsService(sequelize));
   user(app, new UserService(sequelize));
-  comments(app, new CommentsService(sequelize));
+  comments(app, new CommentsService(sequelize), new ArticleService(sequelize));
   return app;
 };

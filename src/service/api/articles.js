@@ -2,13 +2,13 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
+const {getHotArticles} = require(`../../utils`);
 const {
   articleValidator,
   articleExists,
   commentValidator,
   routeParamsValidator,
 } = require(`../middlewares`);
-
 
 const articlesApi = (app, articleService, commentService) => {
   const route = new Router();
@@ -83,7 +83,18 @@ const articlesApi = (app, articleService, commentService) => {
       [routeParamsValidator, articleExists(articleService), commentValidator],
       async (req, res) => {
         const {article} = res.locals;
-        const newComment = await commentService.create(article.id, req.body);
+        const comment = await commentService.create(article.id, req.body);
+
+        const [newComment, allArticles] = await Promise.all([
+          commentService.findOne(comment.id, comment.userId),
+          articleService.findAll(true),
+        ]);
+
+        const hotArticles = getHotArticles(allArticles);
+
+        const io = req.app.locals.socketio;
+        await io.emit(`comment:create`, newComment, hotArticles);
+
         res.status(HttpCode.CREATED).json(newComment);
       }
   );

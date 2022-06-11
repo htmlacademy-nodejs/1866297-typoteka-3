@@ -165,6 +165,9 @@ const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: true});
   const app = express();
   app.use(express.json());
+  app.locals.socketio = {
+    emit: jest.fn(),
+  };
   await initDB(mockDB, {
     categories: mockCategories,
     articles: mockArticles,
