@@ -2,9 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-
 const {userValidator} = require(`../middlewares`);
-
 const passwordUtils = require(`../lib/password`);
 
 const route = new Router();

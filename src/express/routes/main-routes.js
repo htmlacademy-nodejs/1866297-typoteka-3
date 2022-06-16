@@ -1,12 +1,13 @@
 "use strict";
 
 const {Router} = require(`express`);
-const mainRouter = new Router();
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 const isGuest = require(`../middlewares/is-guest`);
 const {prepareErrors, getHotArticles} = require(`../../utils`);
 const csrf = require(`csurf`);
+
+const mainRouter = new Router();
 const csrfProtection = csrf();
 
 
@@ -15,7 +16,7 @@ const LATEST_COMMENTS_COUNT = 4;
 
 mainRouter.get(`/`, async (req, res) => {
   const {user} = req.session;
-  let {page = 1} = req.query;
+  const {page = 1} = req.query;
   page = +page;
 
   const limit = ARTICLES_PER_PAGE;
@@ -44,7 +45,9 @@ mainRouter.get(`/`, async (req, res) => {
   res.render(`main`, {latestComments, hotArticles, articles, page, totalPages, categories: notEmptyCategories, user});
 });
 
-mainRouter.get(`/register`, isGuest, (req, res) => res.render(`sign-up`));
+mainRouter.get(`/register`, isGuest, (req, res) => {
+  res.render(`sign-up`);
+});
 mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
   const userData = {

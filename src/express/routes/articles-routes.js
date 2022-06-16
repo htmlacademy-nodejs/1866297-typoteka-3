@@ -5,9 +5,10 @@ const {Router} = require(`express`);
 const uploadMiddleware = require(`../middlewares/upload`);
 const auth = require(`../middlewares/auth`);
 const isAdmin = require(`../middlewares/is-admin`);
-const articlesRouter = new Router();
 const api = require(`../api`).getAPI();
 const csrf = require(`csurf`);
+
+const articlesRouter = new Router();
 const csrfProtection = csrf({cookie: false});
 
 
@@ -33,7 +34,7 @@ articlesRouter.get(
     async (req, res) => {
       const {user} = req.session;
       const {id} = req.params;
-      let {page = 1} = req.query;
+      const {page = 1} = req.query;
       page = +page;
 
       const limit = ARTICLES_PER_PAGE;

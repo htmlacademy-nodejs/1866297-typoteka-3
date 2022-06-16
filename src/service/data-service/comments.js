@@ -48,7 +48,7 @@ class CommentsService {
   }
 
   async findAll({articleId, order = `ASC`, limit, includeUser = false}) {
-    let extend = {
+    const extend = {
       attributes: [`Comment.*`]
     };
     if (articleId) {

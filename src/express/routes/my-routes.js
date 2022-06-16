@@ -1,11 +1,12 @@
 "use strict";
 
 const {Router} = require(`express`);
-const myRouter = new Router();
 const api = require(`../api`).getAPI();
 const {prepareErrors} = require(`../../utils`);
 const auth = require(`../middlewares/auth`);
 const isAdmin = require(`../middlewares/is-admin`);
+
+const myRouter = new Router();
 
 myRouter.get(`/`, auth, isAdmin, async (req, res) => {
   const {user} = req.session;

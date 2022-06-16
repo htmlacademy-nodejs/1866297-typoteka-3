@@ -155,7 +155,6 @@ class ArticleService {
       return {
         ...article,
         categories: article.categoriesData.split(`, `).map((category) => {
-          console.log(category);
           // eslint-disable-next-line no-shadow
           const [name, id] = category.split(`|`);
           return {id, name};
