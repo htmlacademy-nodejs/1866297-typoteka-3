@@ -4,14 +4,14 @@ const express = require(`express`);
 const path = require(`path`);
 const cookieParser = require(`cookie-parser`);
 const {HttpCode} = require(`./../constants.js`);
+const session = require(`express-session`);
+const sequelize = require(`../service/lib/sequelize`);
+const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
 const {SESSION_SECRET} = process.env;
 if (!SESSION_SECRET) {
   throw new Error(`SESSION_SECRET environment variable is not defined`);
 }
-const session = require(`express-session`);
-const sequelize = require(`../service/lib/sequelize`);
-const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
 const DEFAULT_PORT = 8080;
 const PUBLIC_DIR = `public`;

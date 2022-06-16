@@ -3,7 +3,6 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const {getHotArticles} = require(`../../utils`);
-
 const {routeParamsValidator, commentExists} = require(`../middlewares`);
 
 const LATEST_COMMENTS_COUNT = 4;

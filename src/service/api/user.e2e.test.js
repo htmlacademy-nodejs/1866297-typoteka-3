@@ -186,7 +186,7 @@ describe(`API создает пользователя если данные ва
   let response;
 
   beforeAll(async () => {
-    let app = await createAPI();
+    const app = await createAPI();
     response = await request(app).post(`/user`).send(validUserData);
   });
 

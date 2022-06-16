@@ -415,10 +415,10 @@ test(`API не позволяет удалить не существующий �
 });
 
 describe(`API возвращает список комментариев к публикации`, () => {
-  let response; let app;
+  let response;
 
   beforeAll(async () => {
-    app = await createAPI();
+    const app = await createAPI();
     response = await request(app).get(`/articles/2/comments`);
   });
 

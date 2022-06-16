@@ -175,10 +175,9 @@ const createAPI = async () => {
 
 describe(`API возвращает список категорий`, () => {
   let response;
-  let app;
 
   beforeAll(async () => {
-    app = await createAPI();
+    const app = await createAPI();
     response = await request(app).get(`/category`);
   });
 
@@ -205,13 +204,12 @@ describe(`Создание категории`, () => {
 
   describe(`API создает категорию`, () => {
     let response;
-    let app;
     const validCategory = {
       name: `Новая категория`,
     };
 
     beforeAll(async () => {
-      app = await createAPI();
+      const app = await createAPI();
       response = await request(app).post(`/category`).send(validCategory);
     });
 
@@ -246,13 +244,12 @@ describe(`Изменение категории`, () => {
 
   describe(`API изменяет категорию`, () => {
     let response;
-    let app;
     const validCategory = {
       name: `Изменённая категория`,
     };
 
     beforeAll(async () => {
-      app = await createAPI();
+      const app = await createAPI();
       response = await request(app).put(`/category/1`).send(validCategory);
     });
 
