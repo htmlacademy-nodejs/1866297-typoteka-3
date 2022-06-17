@@ -20,11 +20,11 @@ module.exports = (app, service) => {
 
     data.password = await passwordUtils.hash(data.password);
 
-    const result = await service.create(data);
+    const newUser = await service.create(data);
 
-    delete result.password;
+    delete newUser.password;
 
-    res.status(HttpCode.CREATED).json(result);
+    res.status(HttpCode.CREATED).json(newUser);
   });
 
   route.post(`/auth`, async (req, res) => {

@@ -16,13 +16,14 @@ const ErrorRegisterMessage = {
 
 const imageRegexp = /.*\.(jpeg|jpg|png)$/;
 
-const nameSchema = (errorMessage) =>
-  Joi.string()
+const nameSchema = (errorMessage) => {
+  return Joi.string()
     .pattern(/[^0-9$&+,:;=?@#|'<>.^*()%!]+$/)
     .required()
     .messages({
       "string.pattern.base": errorMessage,
     });
+};
 
 const schema = Joi.object({
   firstName: nameSchema(ErrorRegisterMessage.FIRST_NAME),

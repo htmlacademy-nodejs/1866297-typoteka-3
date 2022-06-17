@@ -1,11 +1,9 @@
 "use strict";
 
 const {Router} = require(`express`);
-const {HttpCode} = require(`../../constants`);
+const {HttpCode, USER_INTERFACE_SETTINGS} = require(`../../constants`);
 const {getHotArticles} = require(`../../utils`);
 const {routeParamsValidator, commentExists} = require(`../middlewares`);
-
-const LATEST_COMMENTS_COUNT = 4;
 
 const commentsApi = (app, commentService, articleService) => {
   const route = new Router();
@@ -30,7 +28,7 @@ const commentsApi = (app, commentService, articleService) => {
         const [latestComments, allArticles] = await Promise.all([
           commentService.findAll({
             order: `DESC`,
-            limit: LATEST_COMMENTS_COUNT,
+            limit: USER_INTERFACE_SETTINGS.latestCommentsCount,
             includeUser: true,
           }),
           articleService.findAll(true),

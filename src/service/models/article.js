@@ -2,25 +2,26 @@
 'use strict';
 
 const {DataTypes, Model} = require(`sequelize`);
+const {ARTICLE_MODEL_SETTINGS} = require(`../../constants`);
 
-class Article extends Model { }
+class Article extends Model {}
 
 const define = (sequelize) =>
   Article.init(
       {
         title: {
-          type: DataTypes.STRING(250),
+          type: DataTypes.STRING(ARTICLE_MODEL_SETTINGS.titleMaxLength),
           allowNull: false,
         },
         fullText: {
-          type: DataTypes.STRING(1000),
+          type: DataTypes.STRING(ARTICLE_MODEL_SETTINGS.fullTextMaxLength),
           allowNull: false,
         },
         announce: {
-          type: DataTypes.STRING(250),
+          type: DataTypes.STRING(ARTICLE_MODEL_SETTINGS.announceMaxLength),
           allowNull: false,
         },
-        photo: DataTypes.STRING(15),
+        photo: DataTypes.STRING(ARTICLE_MODEL_SETTINGS.photoMaxLength),
       },
       {
         sequelize,

@@ -1,6 +1,7 @@
 "use strict";
 
 const {ensureArray, prepareErrors} = require(`../../utils`);
+const {USER_INTERFACE_SETTINGS} = require(`../../constants`);
 const {Router} = require(`express`);
 const uploadMiddleware = require(`../middlewares/upload`);
 const auth = require(`../middlewares/auth`);
@@ -10,9 +11,6 @@ const csrf = require(`csurf`);
 
 const articlesRouter = new Router();
 const csrfProtection = csrf({cookie: false});
-
-
-const ARTICLES_PER_PAGE = 8;
 
 const getViewArticleData = async (id) => {
   const [article, categories] = await Promise.all([
@@ -37,9 +35,9 @@ articlesRouter.get(
       const {page = 1} = req.query;
       page = +page;
 
-      const limit = ARTICLES_PER_PAGE;
+      const limit = USER_INTERFACE_SETTINGS.articlesPerPage;
 
-      const offset = (page - 1) * ARTICLES_PER_PAGE;
+      const offset = (page - 1) * USER_INTERFACE_SETTINGS.articlesPerPage;
 
       const [categories, {articles, count}] = await Promise.all([
         api.getCategories(true),
@@ -59,7 +57,9 @@ articlesRouter.get(
         return res.render(`errors/404`);
       }
 
-      const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+      const totalPages = Math.ceil(
+          count / USER_INTERFACE_SETTINGS.articlesPerPage
+      );
 
       return res.render(`articles-by-category`, {
         user,

@@ -20,12 +20,23 @@ module.exports = {
   MAX_ID_LENGTH: 6,
   Env: {
     DEVELOPMENT: `development`,
-    PRODUCTION: `production`
+    PRODUCTION: `production`,
   },
   HttpMethod: {
     GET: `GET`,
     POST: `POST`,
     PUT: `PUT`,
-    DELETE: `DELETE`
-  }
+    DELETE: `DELETE`,
+  },
+  USER_INTERFACE_SETTINGS: {
+    hotArticlesLength: 4,
+    latestCommentsCount: 4,
+    articlesPerPage: 8,
+  },
+  ARTICLE_MODEL_SETTINGS: {
+    titleMaxLength: 250,
+    fullTextMaxLength: 1000,
+    announceMaxLength: 250,
+    photoMaxLength: 15,
+  },
 };

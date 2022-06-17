@@ -1,4 +1,5 @@
 "use strict";
+const {USER_INTERFACE_SETTINGS} = require(`./constants`);
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -19,8 +20,9 @@ const shuffle = (someArray) => {
   return someArray;
 };
 
-const ensureArray = (value) =>
-  Array.isArray(value) ? value : [value];
+const ensureArray = (value) => {
+  return Array.isArray(value) ? value : [value];
+};
 
 const prepareErrors = (errors) => {
   return errors.response.data.split(`\n`);
@@ -28,18 +30,18 @@ const prepareErrors = (errors) => {
 
 const getHotArticles = (allArticles) => {
   return allArticles
-  .map(({id, announce, comments}) => {
-    return {
-      id,
-      announce,
-      commentsLength: comments.length,
-    };
-  })
-  .filter(({commentsLength}) => commentsLength > 0)
-  .sort((art1, art2) => {
-    return art2.commentsLength - art1.commentsLength;
-  })
-  .slice(0, 4);
+    .map(({id, announce, comments}) => {
+      return {
+        id,
+        announce,
+        commentsLength: comments.length,
+      };
+    })
+    .filter(({commentsLength}) => commentsLength > 0)
+    .sort((art1, art2) => {
+      return art2.commentsLength - art1.commentsLength;
+    })
+    .slice(0, USER_INTERFACE_SETTINGS.hotArticlesLength);
 };
 
 module.exports = {
