@@ -2,6 +2,7 @@
 
 const express = require(`express`);
 const path = require(`path`);
+const helmet = require(`helmet`);
 const cookieParser = require(`cookie-parser`);
 const {HttpCode} = require(`./../constants.js`);
 const session = require(`express-session`);
@@ -35,6 +36,17 @@ app.use(
       resave: false,
       proxy: true,
       saveUninitialized: false,
+    })
+);
+
+app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: [`'self'`],
+        },
+      },
+      xssFilter: true,
     })
 );
 
