@@ -5,23 +5,20 @@ const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 const isGuest = require(`../middlewares/is-guest`);
 const {prepareErrors, getHotArticles} = require(`../../utils`);
+const {USER_INTERFACE_SETTINGS} = require(`../../constants`);
 const csrf = require(`csurf`);
 
 const mainRouter = new Router();
 const csrfProtection = csrf();
-
-
-const ARTICLES_PER_PAGE = 8;
-const LATEST_COMMENTS_COUNT = 4;
 
 mainRouter.get(`/`, async (req, res) => {
   const {user} = req.session;
   const {page = 1} = req.query;
   page = +page;
 
-  const limit = ARTICLES_PER_PAGE;
+  const limit = USER_INTERFACE_SETTINGS.articlesPerPage;
 
-  const offset = (page - 1) * ARTICLES_PER_PAGE;
+  const offset = (page - 1) * USER_INTERFACE_SETTINGS.articlesPerPage;
 
   const [{count, articles}, allArticles, latestComments, categories] =
     await Promise.all([
@@ -29,7 +26,7 @@ mainRouter.get(`/`, async (req, res) => {
       api.getArticles({comments: true}),
       api.getComments({
         order: `DESC`,
-        limit: LATEST_COMMENTS_COUNT,
+        limit: USER_INTERFACE_SETTINGS.latestCommentsCount,
         includeUser: true,
       }),
       api.getCategories(true),
@@ -37,7 +34,7 @@ mainRouter.get(`/`, async (req, res) => {
 
   const hotArticles = getHotArticles(allArticles);
 
-  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+  const totalPages = Math.ceil(count / USER_INTERFACE_SETTINGS.articlesPerPage);
 
   const notEmptyCategories = categories.filter(
       (category) => Number(category.count) > 0

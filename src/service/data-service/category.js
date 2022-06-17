@@ -55,7 +55,7 @@ class CategoryService {
 
   async findAll(needCount) {
     if (needCount) {
-      const result = await this._Category.findAll({
+      const categories = await this._Category.findAll({
         attributes: [
           `id`,
           `name`,
@@ -71,7 +71,7 @@ class CategoryService {
           },
         ],
       });
-      return result.map((it) => it.get());
+      return categories.map((it) => it.get());
     } else {
       return this._Category.findAll({raw: true});
     }
