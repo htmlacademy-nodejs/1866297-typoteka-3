@@ -18,7 +18,7 @@ const schema = Joi.object({
   }),
 });
 
-module.exports = async (req, res, next) => {
+module.exports = (req, res, next) => {
   const comment = req.body;
 
   return schemaValidator({

@@ -6,6 +6,7 @@ const Sequelize = require(`sequelize`);
 const initDB = require(`../lib/init-db`);
 const comments = require(`./comments`);
 const DataService = require(`../data-service/comments`);
+const ArticleService = require(`../data-service/article`);
 const {HttpCode} = require(`../../constants`);
 const passwordUtils = require(`../lib/password`);
 
@@ -164,12 +165,15 @@ const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   const app = express();
   app.use(express.json());
+  app.locals.socketio = {
+    emit: jest.fn(),
+  };
   await initDB(mockDB, {
     categories: mockCategories,
     articles: mockArticles,
     users: mockUsers,
   });
-  comments(app, new DataService(mockDB));
+  comments(app, new DataService(mockDB), new ArticleService(mockDB));
   return app;
 };
 
