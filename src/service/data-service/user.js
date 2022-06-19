@@ -1,13 +1,10 @@
 'use strict';
+const BaseService = require(`./base-service`);
 
-class UserService {
-  constructor(sequelize) {
+class UserService extends BaseService {
+  constructor({sequelize, serviceModelName}) {
+    super({sequelize, serviceModelName});
     this._User = sequelize.models.User;
-  }
-
-  async create(userData) {
-    const user = await this._User.create(userData);
-    return user.get();
   }
 
   async findByEmail(email) {

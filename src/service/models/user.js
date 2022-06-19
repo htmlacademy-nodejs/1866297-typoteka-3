@@ -27,7 +27,6 @@ const define = (sequelize) =>
           allowNull: false,
         },
         avatar: {
-        // eslint-disable-next-line new-cap
           type: DataTypes.STRING(AVATAR_MAX_LENGTH),
           allowNull: true,
         },

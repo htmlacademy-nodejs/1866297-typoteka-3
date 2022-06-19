@@ -22,10 +22,18 @@ defineModels(sequelize);
 
 module.exports = async () => {
   const app = new Router();
-  category(app, new CategoryService(sequelize));
+  category(app, new CategoryService({sequelize, serviceModelName: `_Category`}));
   search(app, new SearchService(sequelize));
-  articles(app, new ArticleService(sequelize), new CommentsService(sequelize));
-  user(app, new UserService(sequelize));
-  comments(app, new CommentsService(sequelize), new ArticleService(sequelize));
+  articles(
+      app,
+      new ArticleService({sequelize, serviceModelName: `_Article`}),
+      new CommentsService({sequelize, serviceModelName: `_Comment`})
+  );
+  user(app, new UserService({sequelize, serviceModelName: `_User`}));
+  comments(
+      app,
+      new CommentsService({sequelize, serviceModelName: `_Comment`}),
+      new ArticleService({sequelize, serviceModelName: `_Article`})
+  );
   return app;
 };

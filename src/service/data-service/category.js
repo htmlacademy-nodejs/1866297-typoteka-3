@@ -2,16 +2,13 @@
 
 const Sequelize = require(`sequelize`);
 const Aliase = require(`../models/aliase`);
+const BaseService = require(`./base-service`);
 
-class CategoryService {
-  constructor(sequelize) {
+class CategoryService extends BaseService {
+  constructor({sequelize, serviceModelName}) {
+    super({sequelize, serviceModelName});
     this._Category = sequelize.models.Category;
     this._ArticleCategory = sequelize.models.ArticleCategory;
-  }
-
-  async create(categoryData) {
-    const category = await this._Category.create(categoryData);
-    return category.get();
   }
 
   async update(id, data) {
@@ -19,13 +16,6 @@ class CategoryService {
       where: {id},
     });
     return !!affectedRows;
-  }
-
-  async drop(id) {
-    const deletedRows = await this._Category.destroy({
-      where: {id},
-    });
-    return !!deletedRows;
   }
 
   async findOne(id) {

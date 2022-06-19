@@ -169,7 +169,10 @@ const createAPI = async () => {
     articles: mockArticles,
     users: mockUsers,
   });
-  category(app, new DataService(mockDB));
+  category(
+      app,
+      new DataService({sequelize: mockDB, serviceModelName: `_Category`})
+  );
   return app;
 };
 

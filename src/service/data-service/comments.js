@@ -1,10 +1,11 @@
 'use strict';
 
 const Aliase = require(`../models/aliase`);
+const BaseService = require(`./base-service`);
 
-class CommentsService {
-  constructor(sequelize) {
-    this.sequelize = sequelize;
+class CommentsService extends BaseService {
+  constructor({sequelize, serviceModelName}) {
+    super({sequelize, serviceModelName});
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._User = sequelize.models.User;
@@ -17,13 +18,6 @@ class CommentsService {
     });
   }
 
-  async drop(id) {
-    const deletedRows = await this._Comment.destroy({
-      where: {id},
-    });
-    return !!deletedRows;
-  }
-
   async findOne(id, userId) {
     if (userId) {
       return this._Comment.findOne({
@@ -31,9 +25,9 @@ class CommentsService {
         where: {id},
         attributes: [
           `Comment.*`,
-          [this.sequelize.col(`users.firstName`), `firstName`],
-          [this.sequelize.col(`users.lastName`), `lastName`],
-          [this.sequelize.col(`users.avatar`), `avatar`],
+          [this._sequelize.col(`users.firstName`), `firstName`],
+          [this._sequelize.col(`users.lastName`), `lastName`],
+          [this._sequelize.col(`users.avatar`), `avatar`],
         ],
         include: [
           {
@@ -66,9 +60,9 @@ class CommentsService {
         },
       ];
       extend.attributes.push(
-          [this.sequelize.col(`users.firstName`), `firstName`],
-          [this.sequelize.col(`users.lastName`), `lastName`],
-          [this.sequelize.col(`users.avatar`), `avatar`]
+          [this._sequelize.col(`users.firstName`), `firstName`],
+          [this._sequelize.col(`users.lastName`), `lastName`],
+          [this._sequelize.col(`users.avatar`), `avatar`]
       );
     }
     return this._Comment.findAll({

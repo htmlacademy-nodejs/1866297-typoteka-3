@@ -1,10 +1,11 @@
 "use strict";
 
 const Aliase = require(`../models/aliase`);
+const BaseService = require(`./base-service`);
 
-class ArticleService {
-  constructor(sequelize) {
-    this.sequelize = sequelize;
+class ArticleService extends BaseService {
+  constructor({sequelize, serviceModelName}) {
+    super({sequelize, serviceModelName});
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._Category = sequelize.models.Category;
@@ -15,13 +16,6 @@ class ArticleService {
     const article = await this._Article.create(articleData);
     await article.addCategories(articleData.categories);
     return article.get();
-  }
-
-  async drop(id) {
-    const deletedRows = await this._Article.destroy({
-      where: {id},
-    });
-    return !!deletedRows;
   }
 
   async findOne(id, needComments) {
@@ -42,15 +36,18 @@ class ArticleService {
           },
         ],
       });
-      extend.order = [[this.sequelize.col(`comments.createdAt`), `DESC`]];
+      extend.order = [[this._sequelize.col(`comments.createdAt`), `DESC`]];
     }
     return this._Article.findByPk(id, {...extend});
   }
 
   async update(id, article) {
-    const [[affectedRows], currentArticle] = await Promise.all([this._Article.update(article, {
-      where: {id},
-    }), this._Article.findByPk(id)]);
+    const [[affectedRows], currentArticle] = await Promise.all([
+      this._Article.update(article, {
+        where: {id},
+      }),
+      this._Article.findByPk(id),
+    ]);
 
     const updated = !!affectedRows;
 
@@ -114,7 +111,7 @@ class ArticleService {
   }
   async findPageByCategory({limit, offset, id}) {
     const [[rawArticles], [resultCount]] = await Promise.all([
-      this.sequelize.query(
+      this._sequelize.query(
           `
     SELECT * FROM (
 	SELECT
@@ -140,7 +137,7 @@ class ArticleService {
             },
           }
       ),
-      this.sequelize.query(
+      this._sequelize.query(
           `SELECT COUNT(*) FROM "articles"
       LEFT JOIN "article_categories" ON "article_categories"."ArticleId"="articles".id
 	  JOIN "categories" ON "categories".id = "article_categories"."CategoryId"
