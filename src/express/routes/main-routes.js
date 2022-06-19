@@ -13,7 +13,7 @@ const csrfProtection = csrf();
 
 mainRouter.get(`/`, async (req, res) => {
   const {user} = req.session;
-  let {page = 1} = req.query;
+  const {page = 1} = req.query;
   page = +page;
 
   const limit = USER_INTERFACE_SETTINGS.articlesPerPage;
