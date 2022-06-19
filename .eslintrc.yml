@@ -10,3 +10,6 @@ extends: 'htmlacademy/node'
 
 ignorePatterns:
   '**/express/public/**/*.js'
+
+rules:
+  new-cap: ["error", { "capIsNewExceptionPattern": "STRING" }]
