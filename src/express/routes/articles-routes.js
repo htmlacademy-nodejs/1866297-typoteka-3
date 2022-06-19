@@ -32,7 +32,7 @@ articlesRouter.get(
     async (req, res) => {
       const {user} = req.session;
       const {id} = req.params;
-      const {page = 1} = req.query;
+      let {page = 1} = req.query;
       page = +page;
 
       const limit = USER_INTERFACE_SETTINGS.articlesPerPage;
